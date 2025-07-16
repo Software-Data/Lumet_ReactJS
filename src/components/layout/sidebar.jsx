@@ -11,6 +11,7 @@ import {
   Users,
   ShieldAlert,
   ListOrdered,
+  ZapIcon,
   Car,
   Settings,
   X,
@@ -60,6 +61,7 @@ export function Sidebar() {
     { label: 'Severidades', to: '/severidades', icon: <ShieldAlert className="h-5 w-5" /> },
     { label: 'Prioridades', to: '/prioridades', icon: <ListOrdered className="h-5 w-5" /> },
     { label: 'Carrocerías', to: '/carrocerias', icon: <Car className="h-5 w-5" /> },
+    { label: 'Imperfecciones', to: '/imperfecciones', icon: <ZapIcon className="h-5 w-5" /> },
     { label: 'Configuración', to: '/configuracion', icon: <Settings className="h-5 w-5" /> },
   ];
 

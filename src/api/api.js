@@ -53,6 +53,9 @@ instance.interceptors.request.use(
     getById: (id) => instance.get(`/imagenes/${id}`),
   }
   
+  export const imagenResultado = {
+    getImage: (id) => instance.get(`/imagenes/analizadas/imagen/${id}`),
+  }
 
   export const reportesService = {
     getAll: () => instance.get("/reportes"),
@@ -64,6 +67,7 @@ instance.interceptors.request.use(
       instance.post(`/reportes/${id}/imagen`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       }),
+    regenerarReporte: (carroceriaId, data) => instance.post(`/carrocerias/${carroceriaId}/generar-reporte`, data),
   }
   
   export const severidadesService = {

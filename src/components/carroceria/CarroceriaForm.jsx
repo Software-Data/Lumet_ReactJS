@@ -39,6 +39,7 @@ function CarroceriaForm() {
                     const carroceriaRes = await carroceriasService.getById(id);
                     const carroceria = carroceriaRes.data;
                     setFormData({
+                        id: carroceria.id, // Importante: incluir el ID
                         no_parte: carroceria.no_parte || "",
                         color: carroceria.color || "",
                         panel: carroceria.panel || "",
@@ -49,6 +50,7 @@ function CarroceriaForm() {
                         lote: carroceria.lote || "",
                         estado: carroceria.estado || false,
                         id_usuario: carroceria.id_usuario,
+                        tiene_reporte: carroceria.tiene_reporte || false, // Incluir la información del reporte
                     });
                 }
             } catch (error) {
@@ -109,6 +111,7 @@ function CarroceriaForm() {
             error={error}
             basePath="carrocerias"
             isEditing={isEditing}
+            tieneReporte={formData.tiene_reporte}
         />
     );
 }
