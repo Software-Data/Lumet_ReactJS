@@ -14,7 +14,7 @@ function ReportesList() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [reportesRes, prioridadesRes, imperfeccionesRes, carroceriasRes, usuariosRes] = await Promise.all([
+        const [reportesRes, prioridadesRes , imperfeccionesRes, carroceriasRes, usuariosRes] = await Promise.all([
           reportesService.getAll(),
           prioridadesService.getAll(),
           imperfeccionesService.getAll(),
