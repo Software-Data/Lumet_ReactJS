@@ -1,13 +1,14 @@
 import { useContext, useRef, useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import { imagesService, carroceriasService } from '../../api/api';
-import { Save, ArrowLeft, X, RefreshCcw } from "lucide-react"
+import { Save, ArrowLeft, X, RefreshCcw, FileText } from "lucide-react"
 import { ColorPicker } from 'primereact/colorpicker';
 import Layout from "../layout/layout";
 import { AuthContext } from '../../context/AuthContext';
+const API_URL = import.meta.env.VITE_API_URL;
 
 
-function CrudForm({ title, initialData, fields, onSubmit, loading, error, basePath, isEditing }) {
+function CrudForm({ title, initialData, fields, onSubmit, loading, error, basePath, isEditing, tieneReporte, onRegenerarReporte }) {
   const [formData, setFormData] = useState(initialData || {})
   const [colorHEX, setColorHEX] = useState("FFFFFF");
   const [currentCameraField, setCurrentCameraField] = useState(null);
@@ -20,6 +21,7 @@ function CrudForm({ title, initialData, fields, onSubmit, loading, error, basePa
   const fileInputRef = useRef(null);
   const [isCameraOn, setIsCameraOn] = useState(false);
   const [facingMode, setFacingMode] = useState("user");
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
 
 
   const consultarImagen = async (id) => {
@@ -116,7 +118,11 @@ function CrudForm({ title, initialData, fields, onSubmit, loading, error, basePa
   const handleUpload = (e) => {
     const file = e.target.files[0];
     if (file && currentCameraField) {
-      setImagenPrevisualizacion(currentCameraField || file)
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagenPrevisualizacion(reader.result);
+      };
+      reader.readAsDataURL(file);
       setFormData((prev) => ({ ...prev, [currentCameraField]: file }));
     }
   };
@@ -171,6 +177,50 @@ function CrudForm({ title, initialData, fields, onSubmit, loading, error, basePa
 
     if (success) {
       navigate(`/${basePath}`);
+    }
+  };
+
+  const handleGenerarReporte = async () => {
+    console.log('Generando reporte...', { isEditing, formDataId: formData.id, tieneReporte });
+    
+    if (!isEditing || !formData.id) {
+      console.log('No se puede generar reporte:', { isEditing, formDataId: formData.id });
+      alert('No se puede generar reporte en este momento');
+      return;
+    }
+
+    setIsGeneratingReport(true);
+
+    try {
+      console.log('Enviando petición a:', `${API_URL}/carrocerias/${formData.id}/generar-reporte`);
+      
+      const response = await fetch(`${API_URL}/carrocerias/${formData.id}/generar-reporte`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id_usuario: user.id,
+          descripcion: "Reporte generado manualmente desde el formulario"
+        })
+      });
+
+      console.log('Respuesta del servidor:', response.status);
+
+      if (response.ok) {
+        alert('✅ Reporte generado exitosamente');
+        // Recargar la página para mostrar el nuevo estado
+        window.location.reload();
+      } else {
+        const errorData = await response.json();
+        console.error('Error del servidor:', errorData);
+        alert(`❌ Error al generar reporte: ${errorData.message || 'Error desconocido'}`);
+      }
+    } catch (error) {
+      console.error('Error al generar reporte:', error);
+      alert('❌ Error al generar reporte. Intente nuevamente.');
+    } finally {
+      setIsGeneratingReport(false);
     }
   };
   return (
@@ -304,6 +354,7 @@ function CrudForm({ title, initialData, fields, onSubmit, loading, error, basePa
                               )}
                             </div>
                             <canvas ref={canvasRef} className="hidden" />
+           
                             <div className="flex gap-2 flex-wrap justify-center">
                               {!isCameraOn && !formData[field.name] && (
                                 <>
@@ -328,7 +379,7 @@ function CrudForm({ title, initialData, fields, onSubmit, loading, error, basePa
                                     accept="image/*"
                                     onChange={handleUpload}
                                     className="hidden"
-                                  />
+                                    />
                                 </>
                               )}
 
@@ -338,21 +389,21 @@ function CrudForm({ title, initialData, fields, onSubmit, loading, error, basePa
                                     type="button"
                                     onClick={takePhoto}
                                     className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-all duration-300 ease-in-out"
-                                  >
+                                    >
                                     Tomar Foto
                                   </button>
                                   <button
                                     type="button"
                                     onClick={switchCamera}
                                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 ease-in-out"
-                                  >
+                                    >
                                     <RefreshCcw size={20} />
                                   </button>
                                   <button
                                     type="button"
                                     onClick={stopCamera}
                                     className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-300 ease-in-out"
-                                  >
+                                    >
                                     Cancelar
                                   </button>
                                 </>
@@ -368,7 +419,7 @@ function CrudForm({ title, initialData, fields, onSubmit, loading, error, basePa
                                 type="button"
                                 onClick={() => setFormData((prev) => ({ ...prev, [field.name]: null }))}
                                 className=" my-2 py-2 bg-red-600 text-white rounded-lg"
-                              >
+                                >
                                 Eliminar Imagen
                               </button>
                             </div>
@@ -380,7 +431,7 @@ function CrudForm({ title, initialData, fields, onSubmit, loading, error, basePa
                     <input
                       type={field.type || "text"}
                       name={field.name}
-                      value={formData[field.name] || user.id}
+                      value={field.readOnly && !isEditing ? folio : (formData[field.name] || "")}
                       onChange={handleChange}
                       required={field.required}
                       disabled={field.disabled}
@@ -423,6 +474,34 @@ function CrudForm({ title, initialData, fields, onSubmit, loading, error, basePa
                 <Save className="h-4 w-4 mr-2" />
                 {loading ? "Guardando..." : "Guardar"}
               </button>
+              {isEditing && !tieneReporte && (
+                <button
+                  type="button"
+                  onClick={handleGenerarReporte}
+                  disabled={loading || isGeneratingReport}
+                  className="px-4 py-2 border w-[200px] flex justify-center text-center border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 flex items-center disabled:bg-orange-400 disabled:cursor-not-allowed"
+                >
+                  <FileText className="h-4 w-4 mr-2" />
+                  {isGeneratingReport ? "Generando..." : "Generar Reporte"}
+                </button>
+              )}
+              {isEditing && onRegenerarReporte && (
+                <button
+                  type="button"
+                  onClick={onRegenerarReporte}
+                  disabled={loading}
+                  className="px-4 py-2 border w-[200px] flex justify-center text-center border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 flex items-center disabled:bg-purple-400 disabled:cursor-not-allowed"
+                >
+                  <RefreshCcw className="h-4 w-4 mr-2" />
+                  Regenerar Reporte
+                </button>
+              )}
+              {/* Debug info */}
+              {isEditing && (
+                <div className="text-xs text-gray-400 mt-2">
+                  Debug: isEditing={isEditing.toString()}, tieneReporte={tieneReporte?.toString() || 'undefined'}, formDataId={formData.id}
+                </div>
+              )}
             </div>
           </form>
         </div>

@@ -18,7 +18,10 @@ import SeveridadView from './components/severidad/SeveridadView';
 import ReporteView from './components/reporte/ReporteView';
 import CarroceriasView from './components/carroceria/CarroceriaView';
 import PrioridadView from './components/prioridad/PrioridadView';
+import ImperfeccionView from './components/imperfeccion/ImperfeccionView';
 import UsuarioForm from './components/usuario/UsuarioForm';
+import ImperfeccionForm from './components/imperfeccion/imperfeccionForm';
+import ImperfeccionesPage from './Pages/ImperfeccionesPage';
 import CarroceriasForm from './components/carroceria/CarroceriaForm';
 import UsuariosPage from './Pages/UsuariosPage';
 import CarroceriasPage from './Pages/CarroceriasPage';
@@ -47,6 +50,10 @@ function App() {
             <Route path="/usuarios/nuevo" element={<UsuarioForm />} />
             <Route path="/usuarios/editar/:id" element={<UsuarioForm />} />
             <Route path="/usuarios/ver/:id" element={<UsuarioView />} />
+            <Route path="/imperfecciones" element={<ImperfeccionesPage />} />
+            <Route path="/imperfecciones/nuevo" element={<ImperfeccionForm />} />
+            <Route path="/imperfecciones/editar/:id" element={<ImperfeccionForm />} />
+            <Route path="/imperfecciones/ver/:id" element={<ImperfeccionView />} />
             <Route path="/severidades" element={<SeveridadesPage />} />
             <Route path="/severidades/nuevo" element={<SeveridadForm />} />
             <Route path="/severidades/editar/:id" element={<SeveridadForm />} />

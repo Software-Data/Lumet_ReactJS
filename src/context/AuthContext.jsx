@@ -30,6 +30,7 @@ export const AuthProvider = ({children}) => {
             Cookies.set('token', res.data.token);
             Cookies.set('user', JSON.stringify(res.data.usuario));
         } catch (error) {
+            console.log(error)
             return error.response.data.message;
         }
     };

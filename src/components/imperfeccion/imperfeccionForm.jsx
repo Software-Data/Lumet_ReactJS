@@ -1,22 +1,14 @@
-import { useState, useEffect, useContext } from "react"
+import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { reportesService, prioridadesService, imperfeccionesService, carroceriasService } from "../../api/api"
+import { imperfeccionesService, prioridadesService, carroceriasService } from "../../api/api"
 import CrudForm from "../common/CrudForm"
-import { AuthContext } from '../../context/AuthContext';
 
-function ReporteForm() {
-  const { user } = useContext(AuthContext);
+function ImperfeccionForm() {
   const { id } = useParams()
   const navigate = useNavigate()
   const isEditing = !!id
 
-  const [formData, setFormData] = useState({ 
-    id_prioridad: "",
-    descripcion: "",
-    id_imperfecciones: "",
-    id_carrocerias: "",
-    id_usuario: user.id
-  })
+  const [formData, setFormData] = useState({ nombre: "" })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
@@ -39,15 +31,14 @@ function ReporteForm() {
         setCarrocerias(carroceriasRes.data)
 
         if (isEditing) {
-          const reporteRes = await reportesService.getById(id)
-          const reporte = reporteRes.data
+          const imperfeccionRes = await imperfeccionesService.getById(id)
+          const imperfeccion = imperfeccionRes.data
           setFormData({
-            id: reporte.id,
-            id_prioridad: reporte.id_prioridad || "",
-            descripcion: reporte.descripcion || "",
-            id_imperfecciones: reporte.id_imperfecciones || "",
-            id_carrocerias: reporte.id_carrocerias || "",
-            id_usuario: reporte.id_usuario || user.id
+            id_prioridad: imperfeccion.id_prioridad || "",
+            descripcion: imperfeccion.descripcion || "",
+            id_imperfecciones: imperfeccion.id_imperfecciones || "",
+            id_carrocerias: imperfeccion.id_carrocerias || "",
+            // id_usuario lo manejas tú
           })
         }
       } catch (error) {
@@ -56,52 +47,27 @@ function ReporteForm() {
       }
     }
     fetchData()
-  }, [id, isEditing, user.id])
+  }, [id, isEditing])
 
   const handleSubmit = async (data) => {
     setLoading(true)
     setError("")
     try {
-      const reporteData = { ...data }
+      const imperfeccionData = { ...data }
       if (isEditing) {
-        await reportesService.update(id, reporteData)
+        await imperfeccionesService.update(id, imperfeccionData)
       } else {
-        await reportesService.create(reporteData)
+        await imperfeccionesService.create(imperfeccionData)
       }
       return true
     } catch (error) {
-      console.error("Error al guardar el reporte:", error)
-      setError("Error al guardar el reporte. Intente nuevamente.")
+      console.error("Error al guardar la imperfeccion:", error)
+      setError("Error al guardar la imperfeccion. Intente nuevamente.")
       return false
     } finally {
       setLoading(false)
     }
   }
-
-  const handleRegenerarReporte = async () => {
-    if (!isEditing || !formData.id_carrocerias) {
-      alert("Seleccione una carrocería para regenerar el reporte");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      await reportesService.regenerarReporte(formData.id_carrocerias, {
-        id_usuario: user.id,
-        id_prioridad: formData.id_prioridad,
-        descripcion: formData.descripcion || "Reporte regenerado manualmente"
-      });
-      
-      alert('Reporte regenerado exitosamente');
-      // Recargar la página para mostrar el nuevo estado
-      window.location.reload();
-    } catch (error) {
-      console.error('Error al regenerar reporte:', error);
-      alert(`Error al regenerar reporte: ${error.response?.data?.message || 'Error desconocido'}`);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Mapea las opciones para los selects
   const fields = [
@@ -116,9 +82,9 @@ function ReporteForm() {
     {
       name: "descripcion",
       label: "Descripción",
-      type: "textarea",
+      type: "text",
       required: true,
-      placeholder: "Ingrese la descripción del reporte"
+      placeholder: "Ingrese la descripción del imperfeccion"
     },
     {
       name: "id_imperfecciones",
@@ -133,7 +99,7 @@ function ReporteForm() {
       label: "Carrocería",
       type: "select",
       required: true,
-      options: carrocerias.map(c => ({ value: c.id, label: `${c.folio} - ${c.panel}` })),
+      options: carrocerias.map(c => ({ value: c.id, label: c.lote })),
       placeholder: "Selecciona la carrocería"
     },
     {
@@ -145,17 +111,16 @@ function ReporteForm() {
 
   return (
     <CrudForm
-      title="Reporte"
+      title="Imperfeccion"
       initialData={formData}
       fields={fields}
       onSubmit={handleSubmit}
       loading={loading}
       error={error}
-      basePath="reportes"
+      basePath="imperfeccions"
       isEditing={isEditing}
-      onRegenerarReporte={isEditing ? handleRegenerarReporte : null}
     />
   )
 }
 
-export default ReporteForm
+export default ImperfeccionForm

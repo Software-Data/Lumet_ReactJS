@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import { imagesService } from '../../api/api';
+import { imagenResultado } from '../../api/api';
 import { ArrowLeft, Pencil } from "lucide-react";
 import Layout from "../layout/layout";
 
@@ -23,7 +24,7 @@ function CrudView({ title, data, fields, basePath }) {
 
   // Efecto para cargar la imagen asociada si existe
   useEffect(() => {
-    const loadImage = async () => {
+    const loadImages = async () => {
       if (data && data.id_imagen) {
         setLoadingImage(true);
         setImageError(null);
@@ -37,9 +38,22 @@ function CrudView({ title, data, fields, basePath }) {
           setLoadingImage(false);
         }
       }
+      if (data && data.id_imagen_procesada) {
+        setLoadingImage(true);
+        setImageError(null);
+        try {
+          const res = await imagenResultado.getImage(data.id_imagen_procesada);
+          setImageUrl(res.data.imagenBase64);
+        } catch (error) {
+          console.error("Error al cargar la imagen:", error);
+          setImageError("No se pudo cargar la imagen.");
+        } finally {
+          setLoadingImage(false);
+        }
+      }
     };
 
-    loadImage();
+    loadImages();
   }, [data]);
 
   // Si no hay datos, muestra un mensaje de carga o error
@@ -96,6 +110,24 @@ function CrudView({ title, data, fields, basePath }) {
                       )}
                       {!imageUrl && !loadingImage && !imageError && (
                          <p className="text-gray-500">No hay imagen disponible.</p>
+                      )}
+                    </div>
+                  </div>
+                );
+              }
+
+              if (field.type === 'imperfeccion') {
+                return (
+                  <div key={field.name} className="md:col-span-2">
+                    <p className="text-sm font-bold text-gray-400 mb-1">{field.label}</p>
+                    <div className="bg-gray-900/50 p-4 rounded-md flex justify-center items-center min-h-[200px]">
+                      {loadingImage && <p className="text-gray-300">Cargando imagen...</p>}
+                      {imageError && <p className="text-red-400">{imageError}</p>}
+                      {imageUrl && !loadingImage && (
+                        <img src={imageUrl} alt={field.label} className="max-w-md w-full h-auto rounded-lg shadow-lg" />
+                      )}
+                      {!imageUrl && !loadingImage && !imageError && (
+                         <p className="text-gray-500">No hay imagen disponible. {data.id_imagen_procesada}</p>
                       )}
                     </div>
                   </div>
