@@ -1,6 +1,7 @@
 import imagenLogo from '../assets/Logo.png';
 import { motion } from "framer-motion";
 import playBadge from "../assets/google-play-badge.png";
+import { FaGlobe, FaFacebook, FaInstagram } from "react-icons/fa";
 
 import ia1 from "../assets/ia1.jpg";
 import ia2 from "../assets/ia2.jpg";
@@ -109,11 +110,11 @@ function LandingPage() {
             <span className="text-2xl font-bold text-blue-500 select-none">Lumet Inspection</span>
           </div>
           <nav className="hidden md:flex items-center space-x-8 select-none">
-            {["Inicio", "Demo", "Características", "Precios", "Contacto"].map((section, i) => (
+            {["Inicio", "Demo", "Características", "Ventajas", "Disponibilidad", "Contacto"].map((section, i) => (
               <button
                 key={i}
                 onClick={() => {
-                  const positions = [0, 800, 1600, 2400, 3200];
+                  const positions = [0, 1000, 1700, 2525, 3400, 4000];
                   window.scrollTo({ top: positions[i], behavior: "smooth" });
                 }}
                 className="text-gray-300 hover:text-blue-400 transition font-medium"
@@ -353,8 +354,55 @@ function LandingPage() {
           draggable={false}
         />
       </section>
+      <section className="py-16 px-6 text-center bg-gradient-to-r from-gray-900 to-black">
+        <motion.h3
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeInUp}
+          className="text-2xl font-semibold mb-6"
+        >
+          Contáctanos
+        </motion.h3>
+        
+        <div className="flex justify-center gap-6 mt-8">
+          {/* Botón Web */}
+          <a
+            href="https://67ae33c7a3854.site123.me/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-4 bg-gray-800 rounded-full hover:bg-[#4A0638] transition shadow-lg"
+            aria-label="Visitar sitio web"
+          >
+            <FaGlobe className="text-3xl text-white" />
+          </a>
+
+          {/* Botón Facebook */}
+          <a
+            href="https://www.facebook.com/share/1Ad17DEC4B/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-4 bg-gray-800 rounded-full hover:bg-blue-600 transition shadow-lg"
+            aria-label="Ir a Facebook"
+          >
+            <FaFacebook className="text-3xl text-white" />
+          </a>
+
+          {/* Botón Instagram */}
+          <a
+            href="https://www.instagram.com/softwaredatta?igsh=MW9zYTFrcGlqM2RmOQ=="
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-4 bg-gray-800 rounded-full hover:bg-pink-600 transition shadow-lg"
+            aria-label="Ir a Instagram"
+          >
+            <FaInstagram className="text-3xl text-white" />
+          </a>
+        </div>
+      </section>
+
       {/* Llamado a la acción */}
-<section className="py-20 px-6">
+      <section className="py-20 px-6">
         <div className="max-w-2xl mx-auto text-center select-none">
           <motion.h3
             initial="hidden"
@@ -377,7 +425,7 @@ function LandingPage() {
           <motion.button
             whileHover={{ scale: 1.07 }}
             transition={{ type: "spring", stiffness: 300 }}
-            onClick={() => navigate("/Register")}
+            onClick={() => navigate("/Login")}
             className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-full text-lg shadow-xl transition focus:outline-none focus:ring-4 focus:ring-blue-500"
             aria-label="Empieza tu demo ahora"
           >
