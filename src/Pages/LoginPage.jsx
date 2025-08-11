@@ -1,7 +1,7 @@
 
 import {useForm} from "react-hook-form"
 import { useAuth } from "../context/AuthContext";
-import imagenLogo from '../assets/Imagen.png'; 
+import imagenLogo from '../assets/Logo.png'; 
 import carousel1 from '../assets/carousel/carousel1.png';
 import carousel2 from '../assets/carousel/carousel2.png';
 import carousel3 from '../assets/carousel/carousel3.png';
