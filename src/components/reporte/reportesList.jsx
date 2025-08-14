@@ -73,16 +73,27 @@ function ReportesList() {
 
   const columns = [
     { key: "id", header: "ID" },
-    { 
-      key: "id_prioridad",
-      header: "Prioridad",
-      render: (reporte) => getNombrePrioridad(reporte.id_prioridad)
-    },
     { key: "descripcion", header: "Descripción" },
     { 
-      key: "id_imperfecciones",
-      header: "Imperfección",
-      render: (reporte) => getNombreImperfeccion(reporte.id_imperfecciones)
+      key: "status",
+      header: "Estado",
+      render: (reporte) => {
+        const getStatusDisplay = (status) => {
+          switch (status?.toLowerCase()) {
+            case 'completado':
+              return <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">Completado</span>;
+            case 'pendiente':
+              return <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">Pendiente</span>;
+            case 'procesando':
+              return <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">Procesando</span>;
+            case 'error':
+              return <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">Error</span>;
+            default:
+              return <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">{status || 'N/A'}</span>;
+          }
+        };
+        return getStatusDisplay(reporte.status);
+      }
     },
     { 
       key: "id_carrocerias",

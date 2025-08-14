@@ -69,15 +69,16 @@ function Dashboard() {
 
         // Actualizamos las tarjetas de estadísticas con los datos filtrados
         setStats({
-          reportes: filteredReportes.length,
-          usuarios: filteredUsuarios.length,
-          carrocerias: filteredCarrocerias.length,
+          reportes: reportesRes.data.length,
+          usuarios: usuariosRes.data.length,
+          carrocerias: carroceriasRes.data.length,
           // Estos no suelen tener fecha de creación, así que mostramos el total
           imperfecciones: imperfeccionesRes.data.length,
           roles: rolesRes.data.length,
-          severidades: severidadesRes.data.length
+          severidades: severidadesRes.data.length,
         });
-
+        
+        console.log(filteredUsuarios);
         // --- Procesamiento de datos para las gráficas ---
         const processDataForChart = (data, label) => {
           const monthlyCounts = {};

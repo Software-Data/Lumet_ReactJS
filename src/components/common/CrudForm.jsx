@@ -496,12 +496,6 @@ function CrudForm({ title, initialData, fields, onSubmit, loading, error, basePa
                   Regenerar Reporte
                 </button>
               )}
-              {/* Debug info */}
-              {isEditing && (
-                <div className="text-xs text-gray-400 mt-2">
-                  Debug: isEditing={isEditing.toString()}, tieneReporte={tieneReporte?.toString() || 'undefined'}, formDataId={formData.id}
-                </div>
-              )}
             </div>
           </form>
         </div>

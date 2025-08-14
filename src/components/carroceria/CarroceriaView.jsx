@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
-import { carroceriasService } from "../../api/api";
+import { carroceriasService, reportesService } from "../../api/api";
 import CrudView from "../common/CrudView"; // Asegúrate que la ruta sea correcta
 import Layout from "../layout/layout"; // Importa tu Layout si CrudView no lo hace
 
@@ -9,6 +9,8 @@ function CarroceriaView() {
     const [carroceriaData, setCarroceriaData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [tieneReporte, setTieneReporte] = useState(false);
+    const [idReporte, setIdReporte] = useState(null);
 
     useEffect(() => {
         const fetchCarroceria = async () => {
@@ -17,6 +19,18 @@ function CarroceriaView() {
             try {
                 const response = await carroceriasService.getById(id);
                 setCarroceriaData(response.data);
+                
+                // Verificar si tiene reporte
+                try {
+                    const reportesResponse = await reportesService.getAll();
+                    const reporte = reportesResponse.data.find(r => r.id_carrocerias === parseInt(id));
+                    if (reporte) {
+                        setTieneReporte(true);
+                        setIdReporte(reporte.id);
+                    }
+                } catch (reporteErr) {
+                    console.log('No se pudo verificar reportes:', reporteErr);
+                }
             } catch (err) {
                 console.error("Error al cargar los datos de la carrocería:", err);
                 setError("No se pudieron cargar los detalles. Intente más tarde.");
@@ -55,6 +69,8 @@ function CarroceriaView() {
             data={carroceriaData}
             fields={fields}
             basePath="carrocerias"
+            tieneReporte={tieneReporte}
+            id_reporte={idReporte}
         />
     );
 }

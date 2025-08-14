@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import { imagesService, imagenResultado } from '../../api/api';
-import { ArrowLeft, Pencil } from "lucide-react";
+import { ArrowLeft, Pencil, FileText } from "lucide-react";
 import Layout from "../layout/layout";
 
 const ViewField = ({ label, children, fullWidth = false }) => (
@@ -13,7 +13,7 @@ const ViewField = ({ label, children, fullWidth = false }) => (
   </div>
 );
 
-const ImagenView = ({ label, url, loading, error }) => (
+const ImagenView = ({ label, url, loading, error, tieneReporte, id_reporte}) => (
   <div className="md:col-span-1">
     <p className="text-sm font-bold text-gray-400 mb-1">{label}</p>
     <div className="bg-gray-900/50 p-4 rounded-md flex justify-center items-center min-h-[200px]">
@@ -29,7 +29,7 @@ const ImagenView = ({ label, url, loading, error }) => (
   </div>
 );
 
-function CrudView({ title, data, fields, basePath }) {
+function CrudView({ title, data, fields, basePath, tieneReporte, id_reporte }) {
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -131,6 +131,11 @@ function CrudView({ title, data, fields, basePath }) {
                       return <span className="text-gray-500">-</span>;
                     }
 
+                    // Check if field has a custom render function
+                    if (field.render) {
+                      return field.render(value);
+                    }
+
                     switch (field.type) {
                       case 'select':
                         return getSelectLabel(field.name, value);
@@ -173,6 +178,16 @@ function CrudView({ title, data, fields, basePath }) {
               <Pencil className="h-4 w-4 mr-2" />
               Editar
             </button>
+            {tieneReporte && (
+              <button
+                type="button"
+                onClick={() => navigate(`/reportes/ver/${id_reporte}`)}
+                className="px-6 py-2 flex justify-center items-center w-[200px] border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                Ir al reporte
+              </button>
+            )}
           </div>
         </div>
       </div>

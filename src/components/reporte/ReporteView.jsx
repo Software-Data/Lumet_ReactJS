@@ -80,6 +80,23 @@ function ReporteView() {
     id_imagen_procesada: imperfeccionDetalle?.id_imagen_procesada || null,
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "Fecha inválida";
+      
+      const dateFinal = date.toLocaleDateString('es-ES', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric'
+      });
+      return dateFinal.toUpperCase()[0] + dateFinal.slice(1) + " a las " + date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    } catch (error) {
+      return "Error al formatear fecha";
+    }
+  };
   // Campos comunes (siempre se muestran)
   const commonFields = [
     {
@@ -104,7 +121,9 @@ function ReporteView() {
       name: "createdAt",
       label: "Fecha de Creación",
       type: "text",
-      render: (value) => new Date(value).toLocaleString()
+      render: (value) => {
+        return formatDate(value);
+      }
     },
    ...(!imperfeccionDetalle ? [{
         name: "mensaje_sin_imperfeccion",
