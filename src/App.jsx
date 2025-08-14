@@ -16,6 +16,8 @@ import RolView from './components/rol/RolView';
 import UsuarioView from './components/usuario/UsuarioView';
 import SeveridadView from './components/severidad/SeveridadView';
 import ReporteView from './components/reporte/ReporteView';
+import ReporteDetalleView from './components/reporte/ReporteDetalleView';
+
 import CarroceriasView from './components/carroceria/CarroceriaView';
 import PrioridadView from './components/prioridad/PrioridadView';
 import ImperfeccionView from './components/imperfeccion/ImperfeccionView';
@@ -36,6 +38,7 @@ function App() {
           <Route path='/diccionario' element={<DiccionarioPage />} />
           <Route path='/Login' element={<LoginPage />} />
           <Route path='/' element={<LandingPage />} />
+
 
           {/* RUTAS PROTEGIDAS */}
           <Route element={<ProtectedRoute />}>
@@ -60,7 +63,7 @@ function App() {
             <Route path="/reportes" element={<ReportesPage />} />
             <Route path="/reportes/nuevo" element={<ReporteForm />} />
             <Route path="/reportes/editar/:id" element={<ReporteForm />} />
-            <Route path="/reportes/ver/:id" element={<ReporteView />} />
+            <Route path="/reportes/ver/:id" element={<ReporteDetalleView />} />
             <Route path="/carrocerias" element={<CarroceriasPage />} />
             <Route path="/carrocerias/nuevo" element={<CarroceriasForm />} />
             <Route path="/carrocerias/editar/:id" element={<CarroceriasForm />} />
