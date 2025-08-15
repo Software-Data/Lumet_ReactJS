@@ -352,7 +352,62 @@ function ReporteDetalleView() {
               </div>
 
               {/* Imágenes - Ocupan todo el ancho disponible */}
-              <div className="space-y-4 sm:space-y-6">
+
+            </div>
+
+            {/* Sidebar - Se apila en móvil, se mantiene a la derecha en desktop */}
+            <div className="space-y-4 sm:space-y-6">
+              {/* Información del Reporte */}
+              <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6 h-full mb-8 sm:p-6">
+                <div>
+                <h2 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Información del Reporte</h2>
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="flex items-center">
+                    <Calendar className="h-4 w-4 text-gray-400 mr-2 sm:mr-3 flex-shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <label className="block text-xs font-medium text-gray-500">Fecha de Creación</label>
+                      <p className="text-sm text-white truncate">{formatDate(reporte.createdAt)}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <User className="h-4 w-4 text-gray-400 mr-2 sm:mr-3 flex-shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <label className="block text-xs font-medium text-gray-500">Usuario</label>
+                      <p className="text-sm text-white truncate">{usuario?.nombre || '-'}</p>
+                    </div>
+                  </div>
+                </div>
+                </div>
+                <div className="bg-gray-800 mt-8">
+                    
+                    <h2 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4 mt-4">Clasificación</h2>
+                <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center">
+                        <Calendar className="h-4 w-4 text-gray-400 mr-2 sm:mr-3 flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                            <label className="block text-xs font-medium text-gray-500 mb-1">Prioridad</label>
+                            <p className="text-sm text-white">{severidad?.nombre || 'N/A'}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center">
+
+                        <AlertTriangle className="h-4 w-4 text-gray-400 mr-2 sm:mr-3 flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                            <label className="block text-xs font-medium text-gray-500 mb-1">Severidad</label>
+                            <p className="text-sm text-white">{severidad?.nombre || 'N/A'}</p>
+                        </div>
+
+                    </div>
+                    </div>
+                </div>
+              </div>
+
+
+
+
+            </div>
+            <div className="gap-8 col-span-3">
+            <div className="space-y-4 sm:space-y-6">
                 {/* Imagen Original */}
                 <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
                   <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Imagen Original</h3>
@@ -381,57 +436,6 @@ function ReporteDetalleView() {
                       />
                     </div>
                   </div>
-              </div>
-            </div>
-
-            {/* Sidebar - Se apila en móvil, se mantiene a la derecha en desktop */}
-            <div className="space-y-4 sm:space-y-6">
-              {/* Información del Reporte */}
-              <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-                <h2 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Información del Reporte</h2>
-                <div className="space-y-3 sm:space-y-4">
-                  <div className="flex items-center">
-                    <Calendar className="h-4 w-4 text-gray-400 mr-2 sm:mr-3 flex-shrink-0" />
-                    <div className="min-w-0 flex-1">
-                      <label className="block text-xs font-medium text-gray-500">Fecha de Creación</label>
-                      <p className="text-sm text-white truncate">{formatDate(reporte.createdAt)}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center">
-                    <User className="h-4 w-4 text-gray-400 mr-2 sm:mr-3 flex-shrink-0" />
-                    <div className="min-w-0 flex-1">
-                      <label className="block text-xs font-medium text-gray-500">Usuario</label>
-                      <p className="text-sm text-white truncate">{usuario?.nombre || '-'}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Prioridad y Severidad */}
-              <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-                <h2 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Clasificación</h2>
-                <div className="space-y-3 sm:space-y-4">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Prioridad</label>
-                    <p className="text-sm text-white">{prioridad?.nombre || '-'}</p>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Severidad</label>
-                    <p className="text-sm text-white">{severidad?.nombre || '-'}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Botón de Descarga - Siempre visible */}
-              <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
-                <button
-                  onClick={handleDownloadPDF}
-                  disabled={loading}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
-                >
-                  <Download className="h-4 w-4" />
-                  <span>Descargar PDF</span>
-                </button>
               </div>
             </div>
           </div>
