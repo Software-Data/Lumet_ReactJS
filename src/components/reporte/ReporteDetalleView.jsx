@@ -431,8 +431,8 @@ function ReporteDetalleView() {
                     <div className="w-full">
                       <ImperfeccionesVisualizador
                         imagenUrl={imagenProcesada}
-                        imperfecciones={imagenAnalizada.imperfecciones}
-                        colorDominante={imagenAnalizada.color_dominante}
+                        imperfecciones={imagenAnalizada?.imperfecciones || []}
+                        colorDominante={imagenAnalizada?.color_dominante || null}
                       />
                     </div>
                   </div>
