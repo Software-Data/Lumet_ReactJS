@@ -27,7 +27,8 @@ import UsuariosPage from './Pages/UsuariosPage';
 import CarroceriasPage from './Pages/CarroceriasPage';
 import DiccionarioPage from './Pages/DiccionarioPage';
 import LandingPage from './Pages/LandingPage';
-import RegistoPage from './Pages/RegitroPage'; // Assuming this is the correct import for the registration page
+import RegistoPage from './Pages/RegitroPage';
+import TermsOfService from './Pages/TerminosPage'; // Assuming this is the correct import for the registration page
 
 function App() {
   return (     
@@ -37,6 +38,7 @@ function App() {
           <Route path='/diccionario' element={<DiccionarioPage />} />
           <Route path='/Login' element={<LoginPage />} />
           <Route path='/Register' element={<RegistoPage />} />
+          <Route path='/Terminos' element={<TermsOfService />} />
           <Route path='/' element={<LandingPage />} />
 
           {/* RUTAS PROTEGIDAS */}

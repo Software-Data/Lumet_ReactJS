@@ -121,7 +121,7 @@ function LoginPage() {
       <div className="mt-4">
         <p className="text-gray-400 text-sm text-center">
           Al iniciar sesión, aceptas nuestros{" "}
-          <a href="#" className="text-blue-500 hover:underline">
+          <a href="/Terminos" className="text-blue-500 hover:underline">
             Términos y condiciones
           </a>
           .
