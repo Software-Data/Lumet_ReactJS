@@ -371,8 +371,6 @@ function ReporteDetalleView() {
                   </div>
                 </div>
 
-                {/* Visualizador de Imperfecciones */}
-                {imagenProcesada && imagenAnalizada?.imperfecciones && (
                   <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
                     <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Análisis de Imperfecciones</h3>
                     <div className="w-full">
@@ -383,7 +381,6 @@ function ReporteDetalleView() {
                       />
                     </div>
                   </div>
-                )}
               </div>
             </div>
 
