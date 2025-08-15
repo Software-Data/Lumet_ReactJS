@@ -198,31 +198,31 @@ const ImperfeccionesVisualizador = ({ imagenUrl, imperfecciones, colorDominante 
 
       {/* Lista detallada de imperfecciones */}
       {imperfecciones && imperfecciones.length > 0 && (
-        <div className="bg-gray-800 rounded-lg border border-gray-700 p-4 w-full">
-          <h3 className="text-lg font-semibold text-gray-100 mb-4 flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-red-400" />
+        <div className="bg-gray-800 rounded-lg border border-gray-700 p-3 sm:p-4 w-full">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-100 mb-3 sm:mb-4 flex items-center gap-2">
+            <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-red-400" />
             Detalle de Imperfecciones
           </h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-60 overflow-y-auto w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 max-h-48 sm:max-h-60 overflow-y-auto w-full">
             {imperfecciones.map((imperfeccion, index) => (
               <div
                 key={imperfeccion._id || index}
-                className="bg-gray-700 rounded-lg p-3 border border-gray-600 hover:border-red-400 transition-colors"
+                className="bg-gray-700 rounded-lg p-2 sm:p-3 border border-gray-600 hover:border-red-400 transition-colors"
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="inline-flex items-center justify-center w-6 h-6 bg-red-500 text-white text-xs font-bold rounded-full">
+                  <span className="inline-flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 bg-red-500 text-white text-xs font-bold rounded-full">
                     {index + 1}
                   </span>
                   <span className="text-xs text-gray-400">ID: {imperfeccion._id?.slice(-6) || index}</span>
                 </div>
                 
                 <div className="space-y-1">
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-xs sm:text-sm">
                     <span className="text-gray-300">X:</span>
                     <span className="font-mono font-medium text-gray-100">{imperfeccion.x}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-xs sm:text-sm">
                     <span className="text-gray-300">Y:</span>
                     <span className="font-mono font-medium text-gray-100">{imperfeccion.y}</span>
                   </div>
@@ -234,19 +234,19 @@ const ImperfeccionesVisualizador = ({ imagenUrl, imperfecciones, colorDominante 
       )}
 
       {/* Información del análisis */}
-      <div className="bg-gray-800 rounded-lg border border-gray-700 p-4 w-full">
-        <h3 className="text-lg font-semibold text-gray-100 mb-3">Información del Análisis</h3>
+      <div className="bg-gray-800 rounded-lg border border-gray-700 p-3 sm:p-4 w-full">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-100 mb-3">Información del Análisis</h3>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-300">Total de imperfecciones:</span>
-              <span className="font-semibold text-gray-100">{imperfecciones?.length || 0}</span>
+              <span className="text-xs sm:text-sm text-gray-300">Total de imperfecciones:</span>
+              <span className="font-semibold text-gray-100 text-sm sm:text-base">{imperfecciones?.length || 0}</span>
             </div>
             
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-300">Densidad:</span>
-              <span className="font-semibold text-gray-100">
+              <span className="text-xs sm:text-sm text-gray-300">Densidad:</span>
+              <span className="font-semibold text-gray-100 text-sm sm:text-base">
                 {imperfecciones?.length > 20 ? 'Alta' : imperfecciones?.length > 10 ? 'Media' : 'Baja'}
               </span>
             </div>
@@ -255,13 +255,13 @@ const ImperfeccionesVisualizador = ({ imagenUrl, imperfecciones, colorDominante 
           {colorDominante && (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-300">Color dominante:</span>
+                <span className="text-xs sm:text-sm text-gray-300">Color dominante:</span>
                 <div className="flex items-center gap-2">
                   <div 
-                    className="w-6 h-6 rounded-full border border-gray-500"
+                    className="w-5 h-5 sm:w-6 sm:h-6 rounded-full border border-gray-500"
                     style={{ backgroundColor: colorDominante }}
                   ></div>
-                  <span className="font-mono text-sm font-medium text-gray-100">{colorDominante}</span>
+                  <span className="font-mono text-xs sm:text-sm font-medium text-gray-100">{colorDominante}</span>
                 </div>
               </div>
             </div>

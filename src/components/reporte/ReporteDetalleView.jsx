@@ -297,90 +297,123 @@ function ReporteDetalleView() {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
           {/* Status Badge */}
-          <div className="mb-8">
-            <div className={`inline-flex items-center px-4 py-2 rounded-full border ${getStatusColor(reporte.status)}`}>
+          <div className="mb-6 sm:mb-8">
+            <div className={`inline-flex items-center px-3 sm:px-4 py-2 rounded-full border ${getStatusColor(reporte.status)}`}>
               {getStatusIcon(reporte.status)}
-              <span className="ml-2 font-medium capitalize">{reporte.status || 'Sin estado'}</span>
+              <span className="ml-2 text-sm sm:text-base font-medium capitalize">{reporte.status || 'Sin estado'}</span>
             </div>
           </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Información Principal */}
-            <div className="lg:col-span-2 space-y-6">
+          {/* Layout Responsive */}
+          <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-3 lg:gap-8">
+            {/* Información Principal - Ocupa 2 columnas en desktop, 1 en móvil */}
+            <div className="lg:col-span-2 space-y-4 sm:space-y-6">
               {/* Descripción */}
-              <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6">
-                <div className="flex items-center mb-4">
-                  <FileText className="h-5 w-5 text-emerald-600 mr-3" />
-                  <h2 className="text-lg font-semibold text-white">Descripción</h2>
+              <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+                <div className="flex items-center mb-3 sm:mb-4">
+                  <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600 mr-2 sm:mr-3" />
+                  <h2 className="text-base sm:text-lg font-semibold text-white">Descripción</h2>
                 </div>
-                <p className="text-white leading-relaxed">
+                <p className="text-white leading-relaxed text-sm sm:text-base">
                   {reporte.descripcion || 'Sin descripción disponible'}
                 </p>
               </div>
 
               {/* Detalles de la Carrocería */}
-              <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6">
-                <div className="flex items-center mb-4">
-                  <Car className="h-5 w-5 text-blue-600 mr-3" />
-                  <h2 className="text-lg font-semibold text-white">Información de la Carrocería</h2>
+              <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+                <div className="flex items-center mb-3 sm:mb-4">
+                  <Car className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 mr-2 sm:mr-3" />
+                  <h2 className="text-base sm:text-lg font-semibold text-white">Información de la Carrocería</h2>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">Folio</label>
-                    <p className="text-white font-medium">{carroceria?.folio || '-'}</p>
+                    <label className="block text-xs sm:text-sm font-medium text-gray-500 mb-1">Folio</label>
+                    <p className="text-white font-medium text-sm sm:text-base">{carroceria?.folio || '-'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">Número de Parte</label>
-                    <p className="text-white">{carroceria?.no_parte || '-'}</p>
+                    <label className="block text-xs sm:text-sm font-medium text-gray-500 mb-1">Número de Parte</label>
+                    <p className="text-white text-sm sm:text-base">{carroceria?.no_parte || '-'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">Panel</label>
-                    <p className="text-white">{carroceria?.panel || '-'}</p>
+                    <label className="block text-xs sm:text-sm font-medium text-gray-500 mb-1">Panel</label>
+                    <p className="text-white text-sm sm:text-base">{carroceria?.panel || '-'}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-500 mb-1">Lote</label>
-                    <p className="text-white">{carroceria?.lote || '-'}</p>
+                    <label className="block text-xs sm:text-sm font-medium text-gray-500 mb-1">Lote</label>
+                    <p className="text-white text-sm sm:text-base">{carroceria?.lote || '-'}</p>
                   </div>
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-500 mb-1">Descripción</label>
-                    <p className="text-white">{carroceria?.descripcion || '-'}</p>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs sm:text-sm font-medium text-gray-500 mb-1">Descripción</label>
+                    <p className="text-white text-sm sm:text-base">{carroceria?.descripcion || '-'}</p>
                   </div>
                 </div>
               </div>
 
-              {/* Imágenes */}
+              {/* Imágenes - Ocupan todo el ancho disponible */}
+              <div className="space-y-4 sm:space-y-6">
+                {/* Imagen Original */}
+                <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+                  <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Imagen Original</h3>
+                  <div className="bg-gray-800 rounded-lg overflow-hidden flex items-center justify-center">
+                    {imagenOriginal ? (
+                      <img 
+                        src={imagenOriginal} 
+                        alt="Imagen Original" 
+                        className="w-full h-auto max-h-64 sm:max-h-96 object-contain"
+                      />
+                    ) : (
+                      <div className="text-gray-400 text-center py-8 sm:py-12">
+                        <p className="text-sm sm:text-base">No disponible</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
+                {/* Visualizador de Imperfecciones */}
+                {imagenProcesada && imagenAnalizada?.imperfecciones && (
+                  <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+                    <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Análisis de Imperfecciones</h3>
+                    <div className="w-full">
+                      <ImperfeccionesVisualizador
+                        imagenUrl={imagenProcesada}
+                        imperfecciones={imagenAnalizada.imperfecciones}
+                        colorDominante={imagenAnalizada.color_dominante}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Sidebar con información adicional */}
-            <div className="space-y-6">
+            {/* Sidebar - Se apila en móvil, se mantiene a la derecha en desktop */}
+            <div className="space-y-4 sm:space-y-6">
               {/* Información del Reporte */}
-              <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-white mb-4">Información del Reporte</h2>
-                <div className="space-y-4">
+              <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+                <h2 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Información del Reporte</h2>
+                <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-center">
-                    <Calendar className="h-4 w-4 text-gray-400 mr-3" />
-                    <div>
+                    <Calendar className="h-4 w-4 text-gray-400 mr-2 sm:mr-3 flex-shrink-0" />
+                    <div className="min-w-0 flex-1">
                       <label className="block text-xs font-medium text-gray-500">Fecha de Creación</label>
-                      <p className="text-sm text-white">{formatDate(reporte.createdAt)}</p>
+                      <p className="text-sm text-white truncate">{formatDate(reporte.createdAt)}</p>
                     </div>
                   </div>
                   <div className="flex items-center">
-                    <User className="h-4 w-4 text-gray-400 mr-3" />
-                    <div>
+                    <User className="h-4 w-4 text-gray-400 mr-2 sm:mr-3 flex-shrink-0" />
+                    <div className="min-w-0 flex-1">
                       <label className="block text-xs font-medium text-gray-500">Usuario</label>
-                      <p className="text-sm text-white">{usuario?.nombre || '-'}</p>
+                      <p className="text-sm text-white truncate">{usuario?.nombre || '-'}</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Prioridad y Severidad */}
-              <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-lg font-semibold text-white mb-4">Clasificación</h2>
-                <div className="space-y-4">
+              <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+                <h2 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4">Clasificación</h2>
+                <div className="space-y-3 sm:space-y-4">
                   <div>
                     <label className="block text-xs font-medium text-gray-500 mb-1">Prioridad</label>
                     <p className="text-sm text-white">{prioridad?.nombre || '-'}</p>
@@ -392,43 +425,18 @@ function ReporteDetalleView() {
                 </div>
               </div>
 
-
-            </div>
-          </div>
-          <div className="gap-8 mt-8">
-          <div className="space-y-6 col-span-2">
-                {/* Imagen Original */}
-                <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6 col-span-2">
-                  <h3 className="text-lg font-semibold text-white mb-4">Imagen Original</h3>
-                  <div className="bg-gray-800 rounded-lg overflow-hidden flex items-center justify-center">
-                    {imagenOriginal ? (
-                      <img 
-                        src={imagenOriginal} 
-                        alt="Imagen Original" 
-                        className="max-w-full h-auto max-h-96 object-contain"
-                      />
-                    ) : (
-                      <div className="text-gray-400 text-center py-12">
-                        <p>No disponible</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Visualizador de Imperfecciones */}
-                {imagenProcesada && imagenAnalizada?.imperfecciones && (
-                  <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-6 w-full col-span-2">
-                    <h3 className="text-lg font-semibold text-white mb-4">Análisis de Imperfecciones</h3>
-                    <div className="w-full">
-                      <ImperfeccionesVisualizador
-                        imagenUrl={imagenProcesada}
-                        imperfecciones={imagenAnalizada.imperfecciones}
-                        colorDominante={imagenAnalizada.color_dominante}
-                      />
-                    </div>
-                  </div>
-                )}
+              {/* Botón de Descarga - Siempre visible */}
+              <div className="bg-gray-800 rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
+                <button
+                  onClick={handleDownloadPDF}
+                  disabled={loading}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
+                >
+                  <Download className="h-4 w-4" />
+                  <span>Descargar PDF</span>
+                </button>
               </div>
+            </div>
           </div>
         </div>
       </div>
