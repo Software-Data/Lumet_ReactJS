@@ -137,6 +137,12 @@ function LandingPage() {
             >
               Registrarse
             </button>
+            <button
+              onClick={() => navigate("/Terminos")}
+              className="px-5 py-2 rounded-full bg-blue-600 hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Terminos de Servicio
+            </button>
           </div>
           <button
             className="md:hidden text-gray-300 hover:text-blue-400 focus:outline-none"
@@ -190,7 +196,7 @@ function LandingPage() {
           Basado en tecnología YOLOv8 entrenada en GPUs RTX con datasets gestionados vía Roboflow, nuestra solución detecta defectos en pintura automotriz con precisión milimétrica y velocidad inigualable.
         </motion.p>
       </section>
-<section id="demo" className="container mx-auto py-20 px-6">
+      <section id="demo" className="container mx-auto py-20 px-6">
         <motion.h3
           initial="hidden"
           whileInView="visible"

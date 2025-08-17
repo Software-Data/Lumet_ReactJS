@@ -1,7 +1,7 @@
 
 import {useForm} from "react-hook-form"
 import { useAuth } from "../context/AuthContext";
-import imagenLogo from '../assets/Imagen.png'; 
+import imagenLogo from '../assets/Logo.png'; 
 import carousel1 from '../assets/carousel/carousel1.png';
 import carousel2 from '../assets/carousel/carousel2.png';
 import carousel3 from '../assets/carousel/carousel3.png';
@@ -121,7 +121,7 @@ function LoginPage() {
       <div className="mt-4">
         <p className="text-gray-400 text-sm text-center">
           Al iniciar sesión, aceptas nuestros{" "}
-          <a href="#" className="text-blue-500 hover:underline">
+          <a href="/Terminos" className="text-blue-500 hover:underline">
             Términos y condiciones
           </a>
           .
