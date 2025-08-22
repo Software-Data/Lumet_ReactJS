@@ -11,7 +11,7 @@ instance.interceptors.request.use(
   (config) => {
     const token = Cookies.get("token"); 
     if (token) {
-      config.headers.authorization = `${token}`;
+      config.headers.authorization = `Bearer ${token}`;
     }
     return config;
   },
