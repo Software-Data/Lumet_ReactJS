@@ -16,7 +16,8 @@ import {
   Settings,
   X,
   Menu,
-  LogOut
+  LogOut,
+  MessageCircle
 } from 'lucide-react';
 
 // Componente reutilizable para los items del menú
@@ -91,6 +92,7 @@ export function Sidebar() {
         ))}
       </div>
       <div>
+        <NavItem label="Feedback" to="/feedbacks" icon={<MessageCircle className="h-5 w-5" />} />
         <button
           onClick={() => {
             logout();

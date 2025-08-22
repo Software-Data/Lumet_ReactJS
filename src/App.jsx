@@ -17,6 +17,8 @@ import UsuarioView from './components/usuario/UsuarioView';
 import SeveridadView from './components/severidad/SeveridadView';
 import ReporteView from './components/reporte/ReporteView';
 import ReporteDetalleView from './components/reporte/ReporteDetalleView';
+import FeedbackScreen from './components/feedback/FeedbackScreen';
+import FeedbackView from './components/feedback/FeedbackView';
 
 import CarroceriasView from './components/carroceria/CarroceriaView';
 import PrioridadView from './components/prioridad/PrioridadView';
@@ -68,6 +70,8 @@ function App() {
             <Route path="/reportes/nuevo" element={<ReporteForm />} />
             <Route path="/reportes/editar/:id" element={<ReporteForm />} />
             <Route path="/reportes/ver/:id" element={<ReporteDetalleView />} />
+            <Route path="/feedbacks" element={<FeedbackScreen />} />
+            <Route path="/feedbacks/ver/:id" element={<FeedbackView />} />
             <Route path="/carrocerias" element={<CarroceriasPage />} />
             <Route path="/carrocerias/nuevo" element={<CarroceriasForm />} />
             <Route path="/carrocerias/editar/:id" element={<CarroceriasForm />} />

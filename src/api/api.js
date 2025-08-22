@@ -57,6 +57,15 @@ instance.interceptors.request.use(
     getImage: (id) => instance.get(`/imagenes/analizadas/imagen/${id}`),
   }
 
+
+  export const feedbackService = {
+    getAll: () => instance.get("/feedbacks"),
+    getById: (id) => instance.get(`/feedbacks/${id}`),
+    create: (data, config) => instance.post("/feedbacks", data, config),
+    update: (id, data, config) => instance.put(`/feedbacks/${id}`, data, config),
+    delete: (id) => instance.delete(`/feedbacks/${id}`),
+  }
+
   export const reportesService = {
     getAll: () => instance.get("/reportes"),
     getById: (id) => instance.get(`/reportes/${id}`),
