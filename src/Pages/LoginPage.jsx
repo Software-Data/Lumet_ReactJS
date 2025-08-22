@@ -23,8 +23,13 @@ function LoginPage() {
   const [mensaje, setMensaje] = useState("");
 
   useEffect(() => {
-    if (isAuthenticated) navigate('/Dashboard')
-  },[isAuthenticated])
+    if (isAuthenticated) {
+      // Obtener la URL guardada o ir al Dashboard por defecto
+      const redirectTo = localStorage.getItem('redirectAfterLogin') || '/Dashboard';
+      localStorage.removeItem('redirectAfterLogin'); // Limpiar
+      navigate(redirectTo);
+    }
+  }, [isAuthenticated, navigate])
 
   const onSubmit = handleSubmit(async(values) => {
     setIsLoading(true);
