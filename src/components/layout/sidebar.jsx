@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import imagenLogo from '../../assets/Imagen.png';
 import { AuthContext } from '../../context/AuthContext';
+import { usePermissions } from '../../context/PermissionsContext';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { logout } from '../../context/AuthContext';
@@ -17,13 +17,38 @@ import {
   X,
   Menu,
   LogOut,
-  MessageCircle
+  MessageCircle,
+  Shield,
+  Key,
+  UserCheck
 } from 'lucide-react';
 
 // Componente reutilizable para los items del menú
 // Ayuda a mantener el código principal más limpio y añade la lógica de estado activo
-function NavItem({ to, icon, label, isActive, onClick }) {
+function NavItem({ to, icon, label, isActive, onClick, requiredPermissions = [], requiredRole = null }) {
+  const { hasAllPermissions, hasRole } = usePermissions();
   
+  // Verificar si el usuario tiene acceso a este elemento
+  const hasAccess = () => {
+    // Si se requiere un rol específico, verificar primero
+    if (requiredRole && !hasRole(requiredRole)) {
+      return false;
+    }
+
+    // Si se requieren permisos específicos, verificar
+    if (requiredPermissions.length > 0 && !hasAllPermissions(requiredPermissions)) {
+      return false;
+    }
+
+    // Si no se especifica nada, permitir acceso
+    return true;
+  };
+
+  // Si no tiene acceso, no mostrar el elemento
+  if (!hasAccess()) {
+    return null;
+  }
+
   return (
     <Link
       to={to}
@@ -43,6 +68,8 @@ function NavItem({ to, icon, label, isActive, onClick }) {
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { user } = useContext(AuthContext);
+  const { canRead, isAdmin } = usePermissions();
 
   // Cierra el menú móvil si la pantalla se hace más grande
   useEffect(() => {
@@ -56,14 +83,69 @@ export function Sidebar() {
   }, []);
 
   const menuItems = [
-    { label: 'Overview', to: '/dashboard', icon: <LayoutDashboard className="h-5 w-5" /> },
-    { label: 'Reportes', to: '/reportes', icon: <FileText className="h-5 w-5" /> },
-    { label: 'Usuarios', to: '/usuarios', icon: <Users className="h-5 w-5" /> },
-    { label: 'Severidades', to: '/severidades', icon: <ShieldAlert className="h-5 w-5" /> },
-    { label: 'Prioridades', to: '/prioridades', icon: <ListOrdered className="h-5 w-5" /> },
-    { label: 'Carrocerías', to: '/carrocerias', icon: <Car className="h-5 w-5" /> },
-    { label: 'Imperfecciones', to: '/imperfecciones', icon: <ZapIcon className="h-5 w-5" /> },
-    { label: 'Configuración', to: '/configuracion', icon: <Settings className="h-5 w-5" /> },
+    { 
+      label: 'Overview', 
+      to: '/dashboard', 
+      icon: <LayoutDashboard className="h-5 w-5" /> 
+    },
+    { 
+      label: 'Reportes', 
+      to: '/reportes', 
+      icon: <FileText className="h-5 w-5" />,
+      requiredPermissions: [{ module: 'REPORTES', action: 'VIEW' }]
+    },
+    { 
+      label: 'Usuarios', 
+      to: '/usuarios', 
+      icon: <Users className="h-5 w-5" />,
+      requiredPermissions: [{ module: 'USUARIOS', action: 'VIEW' }]
+    },
+    { 
+      label: 'Severidades', 
+      to: '/severidades', 
+      icon: <ShieldAlert className="h-5 w-5" />,
+      requiredPermissions: [{ module: 'SEVERIDADES', action: 'VIEW' }]
+    },
+    { 
+      label: 'Prioridades', 
+      to: '/prioridades', 
+      icon: <ListOrdered className="h-5 w-5" />,
+      requiredPermissions: [{ module: 'PRIORIDADES', action: 'VIEW' }]
+    },
+    { 
+      label: 'Carrocerías', 
+      to: '/carrocerias', 
+      icon: <Car className="h-5 w-5" />,
+      requiredPermissions: [{ module: 'CARROCERIAS', action: 'VIEW' }]
+    },
+    { 
+      label: 'Imperfecciones', 
+      to: '/imperfecciones', 
+      icon: <ZapIcon className="h-5 w-5" />,
+      requiredPermissions: [{ module: 'IMPERFECCIONES', action: 'VIEW' }]
+    },
+    // Nuevos elementos de administración
+    { 
+      label: 'Roles', 
+      to: '/roles', 
+      icon: <Shield className="h-5 w-5" />,
+      requiredPermissions: [{ module: 'ROLES', action: 'VIEW' }]
+    },
+    { 
+      label: 'Roles y Permisos', 
+      to: '/roles-permisos', 
+      icon: <Key className="h-5 w-5" />,
+      requiredPermissions: [
+        { module: 'ROLES', action: 'VIEW' },
+        { module: 'PERMISOS', action: 'VIEW' }
+      ]
+    },
+    { 
+      label: 'Configuración', 
+      to: '/configuracion', 
+      icon: <Settings className="h-5 w-5" />,
+      requiredRole: 1 // Solo para administradores
+    },
   ];
 
   const sidebarVariants = {
@@ -88,11 +170,21 @@ export function Sidebar() {
             label={item.label}
             isActive={location.pathname === item.to}
             onClick={() => setIsOpen(false)}
+            requiredPermissions={item.requiredPermissions}
+            requiredRole={item.requiredRole}
           />
         ))}
       </div>
       <div>
-        <NavItem label="Feedback" to="/feedbacks" icon={<MessageCircle className="h-5 w-5" />} />
+        <NavItem 
+          label="Feedback" 
+          to="/feedbacks" 
+          icon={<MessageCircle className="h-5 w-5" />}
+          requiredPermissions={[{ module: 'FEEDBACK', action: 'VIEW' }]}
+        />
+        
+        
+        
         <button
           onClick={() => {
             logout();
@@ -106,7 +198,6 @@ export function Sidebar() {
       </div>
     </div>
   );
-const { user } = useContext(AuthContext);
 
   return (
     <>
@@ -131,7 +222,7 @@ const { user } = useContext(AuthContext);
                 Lumet Inspection
               </h1>
               <p className="text-sm text-slate-300 hidden sm:block">
-                Bienvenido, {user.nombre}
+                Bienvenido, {user?.nombre || 'Usuario'}
               </p>
             </div>
           </Link>

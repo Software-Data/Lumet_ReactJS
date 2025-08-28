@@ -1,11 +1,18 @@
-import axios from './api';
+import axios from 'axios';
 
-export const loginRequest = user => axios.post(`/auth/login`, user) 
+const API_URL = import.meta.env.VITE_API_URL;
+
+export const loginRequest = async (user) => {
+  try {
+    const response = await axios.post(`${API_URL}/auth/login`, user);
+    return response;
+  } catch (error) {
+    console.error('Error en loginRequest:', error);
+    throw error;
+  }
+}
 
 export const obtenerUsuarios = user => axios.get(`/usuarios`, user)
-
-
-
 
 // Reportes
 export const fetchReports = async () => {

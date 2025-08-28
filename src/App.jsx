@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { PermissionsProvider } from './context/PermissionsContext';
 import LoginPage from './Pages/LoginPage';
 import Dashboard from './Pages/Dashboard';
 import RolesPage from './Pages/RolesPage';
@@ -31,58 +32,67 @@ import UsuariosPage from './Pages/UsuariosPage';
 import CarroceriasPage from './Pages/CarroceriasPage';
 import DiccionarioPage from './Pages/DiccionarioPage';
 import LandingPage from './Pages/LandingPage';
-import RegistoPage from './Pages/RegitroPage';
-import TermsOfService from './Pages/TerminosPage'; // Assuming this is the correct import for the registration page
+import RegistroPage from './Pages/RegitroPage';
+import TermsOfService from './Pages/TerminosPage';
+import RolesPermisosPage from './Pages/RolesPermisosPage';
+import VerificacionPage from './Pages/VerificacionPage';
 
 function App() {
   return (     
     <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path='/diccionario' element={<DiccionarioPage />} />
-          <Route path='/Login' element={<LoginPage />} />
-          <Route path='/Register' element={<RegistoPage />} />
-          <Route path='/Terminos' element={<TermsOfService />} />
-          <Route path='/' element={<LandingPage />} />
+      <PermissionsProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path='/diccionario' element={<DiccionarioPage />} />
+            <Route path='/login' element={<LoginPage />} />
+            <Route path='/register' element={<RegistroPage />} />
+            <Route path='/register/verificar' element={<RegistroPage />} />
+            <Route path='/verificacion' element={<VerificacionPage />} />
+            <Route path='/verificacion/:correo' element={<VerificacionPage />} />
+            <Route path='/terminos' element={<TermsOfService />} />
+            <Route path='/' element={<LandingPage />} />
 
-
-          {/* RUTAS PROTEGIDAS */}
-          <Route element={<ProtectedRoute />}>
-            <Route path='/Alta' element={<AltaPage />} />
-            <Route path='/Dashboard' element={<Dashboard />} />
-            <Route path="/roles" element={<RolesPage />} />
-            <Route path="/roles/nuevo" element={<RolForm />} />
-            <Route path="/roles/editar/:id" element={<RolForm />} />
-            <Route path="/roles/ver/:id" element={<RolView />} />
-            <Route path="/usuarios" element={<UsuariosPage />} />
-            <Route path="/usuarios/nuevo" element={<UsuarioForm />} />
-            <Route path="/usuarios/editar/:id" element={<UsuarioForm />} />
-            <Route path="/usuarios/ver/:id" element={<UsuarioView />} />
-            <Route path="/imperfecciones" element={<ImperfeccionesPage />} />
-            <Route path="/imperfecciones/nuevo" element={<ImperfeccionForm />} />
-            <Route path="/imperfecciones/editar/:id" element={<ImperfeccionForm />} />
-            <Route path="/imperfecciones/ver/:id" element={<ImperfeccionView />} />
-            <Route path="/severidades" element={<SeveridadesPage />} />
-            <Route path="/severidades/nuevo" element={<SeveridadForm />} />
-            <Route path="/severidades/editar/:id" element={<SeveridadForm />} />
-            <Route path="/severidades/ver/:id" element={<SeveridadView />} />
-            <Route path="/reportes" element={<ReportesPage />} />
-            <Route path="/reportes/nuevo" element={<ReporteForm />} />
-            <Route path="/reportes/editar/:id" element={<ReporteForm />} />
-            <Route path="/reportes/ver/:id" element={<ReporteDetalleView />} />
-            <Route path="/feedbacks" element={<FeedbackScreen />} />
-            <Route path="/feedbacks/ver/:id" element={<FeedbackView />} />
-            <Route path="/carrocerias" element={<CarroceriasPage />} />
-            <Route path="/carrocerias/nuevo" element={<CarroceriasForm />} />
-            <Route path="/carrocerias/editar/:id" element={<CarroceriasForm />} />
-            <Route path="/carrocerias/ver/:id" element={<CarroceriasView />} />
-            <Route path="/prioridades" element={<PrioridadesPage />} />
-            <Route path="/prioridades/nuevo" element={<PrioridadForm />} />
-            <Route path="/prioridades/editar/:id" element={<PrioridadForm />} />
-            <Route path="/prioridades/ver/:id" element={<PrioridadView />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+            {/* RUTAS PROTEGIDAS */}
+            <Route element={<ProtectedRoute />}>
+              <Route path='/alta' element={<AltaPage />} />
+              <Route path='/dashboard' element={<Dashboard />} />
+              <Route path="/roles" element={<RolesPage />} />
+              <Route path="/roles/nuevo" element={<RolForm />} />
+              <Route path="/roles/editar/:id" element={<RolForm />} />
+              <Route path="/roles/ver/:id" element={<RolView />} />
+              <Route path="/usuarios" element={<UsuariosPage />} />
+              <Route path="/usuarios/nuevo" element={<UsuarioForm />} />
+              <Route path="/usuarios/editar/:id" element={<UsuarioForm />} />
+              <Route path="/usuarios/ver/:id" element={<UsuarioView />} />
+              <Route path="/imperfecciones" element={<ImperfeccionesPage />} />
+              <Route path="/imperfecciones/nuevo" element={<ImperfeccionForm />} />
+              <Route path="/imperfecciones/editar/:id" element={<ImperfeccionForm />} />
+              <Route path="/imperfecciones/ver/:id" element={<ImperfeccionView />} />
+              <Route path="/severidades" element={<SeveridadesPage />} />
+              <Route path="/severidades/nuevo" element={<SeveridadForm />} />
+              <Route path="/severidades/editar/:id" element={<SeveridadForm />} />
+              <Route path="/severidades/ver/:id" element={<SeveridadView />} />
+              <Route path="/reportes" element={<ReportesPage />} />
+              <Route path="/reportes/nuevo" element={<ReporteForm />} />
+              <Route path="/reportes/editar/:id" element={<ReporteForm />} />
+              <Route path="/reportes/ver/:id" element={<ReporteDetalleView />} />
+              <Route path="/feedbacks" element={<FeedbackScreen />} />
+              <Route path="/feedbacks/ver/:id" element={<FeedbackView />} />
+              <Route path="/carrocerias" element={<CarroceriasPage />} />
+              <Route path="/carrocerias/nuevo" element={<CarroceriasForm />} />
+              <Route path="/carrocerias/editar/:id" element={<CarroceriasForm />} />
+              <Route path="/carrocerias/ver/:id" element={<CarroceriasView />} />
+              <Route path="/prioridades" element={<PrioridadesPage />} />
+              <Route path="/prioridades/nuevo" element={<PrioridadForm />} />
+              <Route path="/prioridades/editar/:id" element={<PrioridadForm />} />
+              <Route path="/prioridades/ver/:id" element={<PrioridadView />} />
+              
+              {/* Nuevas rutas de permisos */}
+              <Route path="/roles-permisos" element={<RolesPermisosPage />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </PermissionsProvider>
     </AuthProvider> 
   );
 }

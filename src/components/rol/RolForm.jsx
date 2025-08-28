@@ -10,6 +10,10 @@ function RolForm() {
 
   const [formData, setFormData] = useState({
     nombre: "",
+    descripcion: "",
+    codigo: "",
+    createdAt: "",
+    updatedAt: "",
   })
 
   const [roles, setRoles] = useState([])
@@ -71,7 +75,21 @@ function RolForm() {
       type: "text",
       required: true,
       placeholder: "Ingrese el nombre del rol",
-    }
+    },
+    {
+      name: "descripcion",
+      label: "Descripción",
+      type: "text",
+      required: true,
+      placeholder: "Ingrese la descripción del rol",
+    },
+    {
+      name: "codigo",
+      label: "Código",
+      type: "text",
+      required: true,
+      placeholder: "Ingrese el código del rol",
+    },
   ]
 
   return (

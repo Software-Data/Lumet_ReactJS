@@ -30,6 +30,10 @@ function RolView() {
 
     const fields = [
         { name: "nombre", label: "Nombre", type: "text" },
+        { name: "descripcion", label: "Descripción", type: "text" },
+        { name: "createdAt", label: "Creado el", type: "date" },
+        { name: "codigo", label: "Código", type: "text" },
+        { name: "updatedAt", label: "Actualizado el", type: "date" },
     ];
     
     // Mientras carga o si hay un error, puedes mostrar un mensaje.

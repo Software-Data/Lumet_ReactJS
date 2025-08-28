@@ -31,13 +31,15 @@ instance.interceptors.request.use(
     }
   );
 
+  // Servicios de usuarios
   export const usuariosService = {
-    getAll: () => instance.get("/usuarios"),
+    getAll: () => instance.get('/usuarios'),
     getById: (id) => instance.get(`/usuarios/${id}`),
-    create: (data) => instance.post("/usuarios", data),
+    getByEmail: (email) => instance.get(`/usuarios/correo/${email}`), // NUEVO: Buscar por correo
+    create: (data) => instance.post('/usuarios', data),
     update: (id, data) => instance.put(`/usuarios/${id}`, data),
-    delete: (id) => instance.delete(`/usuarios/${id}`),
-  }
+    delete: (id) => instance.delete(`/usuarios/${id}`)
+  };
   
   export const rolesService = {
     getAll: () => instance.get("/roles"),
@@ -47,6 +49,11 @@ instance.interceptors.request.use(
     delete: (id) => instance.delete(`/roles/${id}`),
   }
   
+  export const registerService = {
+    register: (data) => instance.post("/auth/register", data),
+    verify: (data) => instance.post("/auth/verificar-codigo", data),
+    accessCode: (data) => instance.post("/auth/access-code", data)
+  }
   
   export const imagesService = {
     getAll: () => instance.get("/imagenes"),
@@ -95,6 +102,24 @@ instance.interceptors.request.use(
     update: (id, data) => instance.put(`/carrocerias/${id}`, data),
     delete: (id) => instance.delete(`/carrocerias/${id}`),
   }
+
+  // Servicios de KPIs de Calidad
+  export const kpisService = {
+    // KPIs de calidad del día específico
+    getCalidadDia: (fecha) => instance.get(`/kpis/calidad-dia?fecha=${fecha}`),
+    
+    // KPIs de calidad de la última semana
+    getCalidadSemana: () => instance.get('/kpis/calidad-semana'),
+    
+    // Tendencias de calidad (por defecto 30 días)
+    getTendencias: (dias = 30) => instance.get(`/kpis/tendencias?dias=${dias}`),
+    
+    // KPIs de calidad del día actual
+    getCalidadHoy: () => {
+      const hoy = new Date().toISOString().split('T')[0];
+      return instance.get(`/kpis/calidad-dia`);
+    }
+  };
   
   export const prioridadesService = {
     getAll: () => instance.get("/prioridades"),
@@ -112,5 +137,43 @@ instance.interceptors.request.use(
     delete: (id) => instance.delete(`/imperfecciones/${id}`),
   }
   
+// Servicios de permisos - Actualizados según el backend del usuario
+export const permissionsService = {
+  getAll: () => instance.get('/permissions'),
+  create: (data) => instance.post('/permissions', data),
+  getRolePermissions: (roleId) => instance.get(`/permissions/roles/${roleId}`),
+  setRolePermissions: (roleId, permissionIds) => instance.post(`/permissions/roles/${roleId}`, { permissionIds }),
+  getUserPermissions: (userId) => instance.get(`/permissions/usuarios/${userId}`),
+};
+
+// Servicios de roles con permisos - Usando las rutas del backend
+export const rolesPermissionsService = {
+  getRolePermissions: (roleId) => instance.get(`/roles/${roleId}/permissions`),
+  setRolePermissions: (roleId, permissionIds) => instance.post(`/roles/${roleId}/permissions`, { permissionIds }),
+};
+
+// Servicio para permisos de usuarios individuales
+export const userPermissionsService = {
+  getUserPermissions: (userId) => instance.get(`/permissions/usuarios/${userId}`),
+  // Si en el futuro quieres asignar permisos específicos a usuarios
+  // assignUserPermissions: (userId, permissionIds) => instance.post(`/permissions/usuarios/${userId}`, { permissionIds }),
+};
+
+// Servicio para obtener todos los permisos disponibles
+export const allPermissionsService = {
+  getAllPermissions: () => instance.get('/permissions'),
+  createPermission: (permissionData) => instance.post('/permissions', permissionData),
+};
+
+// Servicios de autenticación
+export const authService = {
+  login: (credentials) => instance.post('/auth/login', credentials),
+  register: (userData) => instance.post('/auth/register', userData),
+  verifyCode: (code, correo) => instance.post('/auth/verificar-codigo', { codigo: code, correo }), // Corregido: enviar codigo y correo
+  resendCode: (correo) => instance.post('/auth/reenviar-codigo', { correo }), // Corregido: enviar correo en lugar de email
+  logout: () => instance.post('/auth/logout'),
+  refreshToken: () => instance.post('/auth/refresh-token'),
+  me: () => instance.get('/auth/me')
+};
 
 export default instance;

@@ -133,7 +133,7 @@ function CrudView({ title, data, fields, basePath, tieneReporte, id_reporte }) {
 
                     // Check if field has a custom render function
                     if (field.render) {
-                      return field.render(value);
+                      return field.render(data);
                     }
 
                     switch (field.type) {

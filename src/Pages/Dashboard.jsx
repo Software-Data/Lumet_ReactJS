@@ -1,21 +1,24 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Layout from '../components/layout/layout.jsx';
-import { reportesService, usuariosService, carroceriasService, severidadesService, imperfeccionesService, rolesService } from "../api/api";
-import { FileText, Users, Car, AlertCircle, Plus, DnaIcon, ZapIcon, CalendarIcon } from "lucide-react";
+import { reportesService, usuariosService, carroceriasService, severidadesService, imperfeccionesService, rolesService, kpisService } from "../api/api";
+import { FileText, Users, Car, AlertCircle, Plus, DnaIcon, ZapIcon, CalendarIcon, TrendingUp, TrendingDown, Minus, Target, CheckCircle, XCircle, BarChart3, Activity } from "lucide-react";
 
 // Imports para las nuevas funcionalidades
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Bar } from 'react-chartjs-2';
+import { Bar, Line, Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
+  LineElement,
+  PointElement,
   Title,
   Tooltip,
   Legend,
+  ArcElement,
 } from 'chart.js';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -25,9 +28,12 @@ ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
+  LineElement,
+  PointElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ArcElement
 );
 
 function Dashboard() {
@@ -38,9 +44,14 @@ function Dashboard() {
   // Estados para los datos filtrados y de las gráficas
   const [stats, setStats] = useState({ reportes: 0, usuarios: 0, carrocerias: 0, imperfecciones: 0, severidades: 0, roles: 0 });
   const [recentReportes, setRecentReportes] = useState([]);
-  const [userChartData, setUserChartData] = useState({ labels: [], datasets: [] });
-  const [carroceriaChartData, setCarroceriaChartData] = useState({ labels: [], datasets: [] });
   const [loading, setLoading] = useState(true);
+
+  // Estados para los KPIs de calidad
+  const [kpiHoy, setKpiHoy] = useState(null);
+  const [kpiSemana, setKpiSemana] = useState(null);
+  const [tendencias, setTendencias] = useState(null);
+  const [kpisLoading, setKpisLoading] = useState(true);
+  const [kpisError, setKpisError] = useState(null);
 
   // useEffect se ejecutará cada vez que cambie el rango de fechas
   useEffect(() => {
@@ -65,7 +76,7 @@ function Dashboard() {
 
         const filteredReportes = reportesRes.data.filter(filterByDate);
         const filteredUsuarios = usuariosRes.data.filter(filterByDate);
-        const filteredCarrocerias = carroceriasRes.data.filter(filterByDate);
+        const filteredCarrocerias = reportesRes.data.filter(filterByDate);
 
         // Actualizamos las tarjetas de estadísticas con los datos filtrados
         setStats({
@@ -78,34 +89,6 @@ function Dashboard() {
           severidades: severidadesRes.data.length,
         });
         
-        console.log(filteredUsuarios);
-        // --- Procesamiento de datos para las gráficas ---
-        const processDataForChart = (data, label) => {
-          const monthlyCounts = {};
-          data.forEach(item => {
-            const month = format(new Date(item.createdAt), 'yyyy-MM');
-            monthlyCounts[month] = (monthlyCounts[month] || 0) + 1;
-          });
-
-          const sortedMonths = Object.keys(monthlyCounts).sort();
-          const labels = sortedMonths.map(month => format(new Date(month), 'MMMM yyyy', { locale: es }));
-          const counts = sortedMonths.map(month => monthlyCounts[month]);
-
-          return {
-            labels,
-            datasets: [{
-              label,
-              data: counts,
-              backgroundColor: 'rgba(34, 211, 238, 0.6)', // Un color cian/azul
-              borderColor: 'rgba(34, 211, 238, 1)',
-              borderWidth: 1,
-            }],
-          };
-        };
-        
-        setUserChartData(processDataForChart(filteredUsuarios, 'Usuarios Registrados'));
-        setCarroceriaChartData(processDataForChart(filteredCarrocerias, 'Carrocerías Creadas'));
-
         // Actualizamos los reportes recientes (estos no se filtran por fecha)
         const sortedReportes = [...reportesRes.data]
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
@@ -122,23 +105,72 @@ function Dashboard() {
     fetchData();
   }, [startDate, endDate]); // Dependencias: el efecto se re-ejecuta si las fechas cambian
 
-  const StatCard = ({ title, value, icon, color, linkTo }) => (
+  // Cargar KPIs de calidad
+  useEffect(() => {
+    const fetchKPIs = async () => {
+      setKpisLoading(true);
+      setKpisError(null);
+      try {
+        const [hoyRes, semanaRes, tendenciasRes] = await Promise.all([
+          kpisService.getCalidadHoy(),
+          kpisService.getCalidadSemana(),
+          kpisService.getTendencias(30)
+        ]);
+
+        setKpiHoy(hoyRes.data?.data);
+        setKpiSemana(semanaRes.data?.data);
+        setTendencias(tendenciasRes.data?.data);
+      } catch (error) {
+        console.error("Error al cargar KPIs:", error);
+        setKpisError("No se pudieron cargar los KPIs de calidad. Verifica que el backend esté funcionando.");
+      } finally {
+        setKpisLoading(false);
+      }
+    };
+
+    fetchKPIs();
+  }, []);
+
+  const StatCard = ({ title, value, icon, color, linkTo, subtitle = null }) => (
     <Link to={linkTo} className="bg-gray-800 p-4 rounded-lg shadow-lg hover:bg-gray-700 transition-colors duration-200">
       <div className="flex items-center">
         <div className={`p-3 rounded-full ${color} text-white mr-4`}>{icon}</div>
         <div>
           <p className="text-sm text-gray-400">{title}</p>
           <p className="text-white text-2xl font-bold">{value}</p>
+          {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
         </div>
       </div>
     </Link>
+  );
+
+  const KPICard = ({ title, value, subtitle, icon, color, trend = null }) => (
+    <div className="bg-gray-800 p-6 rounded-lg shadow-lg border-l-4" style={{ borderLeftColor: color }}>
+      <div className="flex items-center justify-between mb-4">
+        <div className={`p-3 rounded-full ${color} text-white`}>{icon}</div>
+        {trend && (
+          <div className={`flex items-center text-sm ${trend === 'up' ? 'text-green-400' : trend === 'down' ? 'text-red-400' : 'text-gray-400'}`}>
+            {trend === 'up' ? <TrendingUp className="h-4 w-4 mr-1" /> : 
+             trend === 'down' ? <TrendingDown className="h-4 w-4 mr-1" /> : 
+             <Minus className="h-4 w-4 mr-1" />}
+            {trend === 'up' ? 'Mejorando' : trend === 'down' ? 'Bajando' : 'Estable'}
+          </div>
+        )}
+      </div>
+      <h3 className="text-lg font-semibold text-gray-300 mb-2">{title}</h3>
+      <p className="text-3xl font-bold text-white mb-1">{value}</p>
+      {subtitle && <p className="text-sm text-gray-400">{subtitle}</p>}
+    </div>
   );
 
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { display: false },
+      legend: { 
+        display: true,
+        labels: { color: '#9ca3af' }
+      },
       title: { display: false },
     },
     scales: {
@@ -154,8 +186,20 @@ function Dashboard() {
     }
   };
 
+  const lineChartOptions = {
+    ...chartOptions,
+    elements: {
+      line: {
+        tension: 0.4
+      },
+      point: {
+        radius: 4,
+        hoverRadius: 6
+      }
+    }
+  };
 
-  if (loading) {
+  if (loading || kpisLoading) {
     return (
       <Layout>
         <div className="flex justify-center items-center h-screen">
@@ -165,11 +209,73 @@ function Dashboard() {
     );
   }
 
+  // Preparar datos para las gráficas solo si existen los KPIs
+  const calidadSemanaData = kpiSemana ? {
+    labels: kpiSemana.kpis_por_dia.map(kpi => format(new Date(kpi.fecha), 'dd/MM', { locale: es })),
+    datasets: [
+      {
+        label: 'Calidad (%)',
+        data: kpiSemana.kpis_por_dia.map(kpi => kpi.porcentaje_calidad),
+        borderColor: '#10b981',
+        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+        borderWidth: 3,
+        fill: true,
+        tension: 0.4
+      },
+      {
+        label: 'Carrocerías',
+        data: kpiSemana.kpis_por_dia.map(kpi => kpi.total_carrocerias),
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+        borderWidth: 2,
+        fill: false,
+        tension: 0.4,
+        yAxisID: 'y1'
+      }
+    ]
+  } : null;
+
+  const tendenciasData = tendencias ? {
+    labels: tendencias.tendencias.slice(-15).map(t => format(new Date(t.fecha), 'dd/MM', { locale: es })),
+    datasets: [
+      {
+        label: 'Volumen de Trabajo',
+        data: tendencias.tendencias.slice(-15).map(t => t.total_carrocerias),
+        backgroundColor: tendencias.tendencias.slice(-15).map(t => 
+          t.tendencia === 'Subiendo' ? 'rgba(16, 185, 129, 0.8)' :
+          t.tendencia === 'Bajando' ? 'rgba(239, 68, 68, 0.8)' :
+          'rgba(156, 163, 175, 0.8)'
+        ),
+        borderColor: tendencias.tendencias.slice(-15).map(t => 
+          t.tendencia === 'Subiendo' ? '#10b981' :
+          t.tendencia === 'Bajando' ? '#ef4444' :
+          '#9ca3af'
+        ),
+        borderWidth: 2
+      }
+    ]
+  } : null;
+
+  const calidadDoughnutData = kpiHoy ? {
+    labels: ['Sin Imperfecciones', 'Con Imperfecciones'],
+    datasets: [
+      {
+        data: [
+          kpiHoy.resumen.carrocerias_sin_imperfecciones,
+          kpiHoy.resumen.carrocerias_con_imperfecciones
+        ],
+        backgroundColor: ['#10b981', '#ef4444'],
+        borderColor: ['#059669', '#dc2626'],
+        borderWidth: 2
+      }
+    ]
+  } : null;
+
   return (
     <Layout>
       {/* Encabezado con título y selector de fechas */}
       <div className="flex flex-col md:flex-row justify-between items-center border-b-2 border-b-emerald-800 h-20 px-6 bg-gray-800 mb-6 gap-4">
-        <h1 className="text-3xl font-bold text-white">Dashboard General</h1>
+        <h1 className="text-3xl font-bold text-white">Dashboard de Calidad</h1>
         <div className="flex items-center gap-4 bg-gray-800 p-2 rounded-lg">
            <CalendarIcon className="h-5 w-5 text-emerald-400"/>
            <DatePicker
@@ -189,13 +295,77 @@ function Dashboard() {
               startDate={startDate}
               endDate={endDate}
               minDate={startDate}
-              className="bg-gray-700 text-white p-2 rounded w-32 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="bg-gray-700 text-white p-2 rounded w-32 focus:outline-none focus:ring-emerald-500"
               dateFormat="dd/MM/yyyy"
             />
         </div>
       </div>
 
-      {/* Tarjetas de Estadísticas */}
+      {/* KPIs de Calidad del Día */}
+      {kpiHoy ? (
+        <div className="mb-8 mx-6">
+          <h2 className="text-2xl font-bold text-white mb-4 flex items-center">
+            <Target className="h-6 w-6 mr-2 text-emerald-400" />
+            Indicadores de calidad
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <KPICard
+              title="Score de Calidad"
+              value={`${kpiHoy.metricas.score_calidad}%`}
+              subtitle={kpiHoy.interpretacion.nivel_calidad}
+              icon={<Activity className="h-6 w-6" />}
+              color="bg-emerald-600"
+              trend={kpiHoy.metricas.score_calidad > 85 ? 'up' : kpiHoy.metricas.score_calidad < 70 ? 'down' : null}
+            />
+            
+            <KPICard
+              title="Calidad General"
+              value={`${kpiHoy.porcentajes.calidad_general}%`}
+              subtitle={`${kpiHoy.resumen.carrocerias_sin_imperfecciones} de ${kpiHoy.resumen.total_carrocerias}`}
+              icon={<CheckCircle className="h-6 w-6" />}
+              color="bg-blue-600"
+            />
+            
+            <KPICard
+              title="Carrocerías con imperfecciones"
+              value={kpiHoy.resumen.carrocerias_con_imperfecciones}
+              subtitle={`${kpiHoy.resumen.carrocerias_con_imperfecciones} de ${kpiHoy.resumen.total_carrocerias}`}
+              icon={<XCircle className="h-6 w-6" />}
+              color="bg-red-600"
+            />
+            
+            <KPICard
+              title="Imperfecciones por carrocería"
+              value={`${kpiHoy.metricas.imperfecciones_por_carroceria}`}
+              subtitle={`Meta: 1.0`}
+              icon={<BarChart3 className="h-6 w-6" />}
+              color="bg-purple-600"
+            />
+          </div>
+        </div>
+      ) : kpisError ? (
+        <div className="mb-8 mx-6">
+          <div className="bg-red-900/50 border border-red-500 p-6 rounded-lg">
+            <h2 className="text-2xl font-bold text-red-400 mb-4 flex items-center">
+              <XCircle className="h-6 w-6 mr-2" />
+              Error al Cargar KPIs
+            </h2>
+            <p className="text-red-300 mb-4">{kpisError}</p>
+            <div className="text-sm text-red-400">
+              <p>• Verifica que el backend esté funcionando</p>
+              <p>• Confirma que los endpoints de KPIs estén implementados:</p>
+              <ul className="ml-4 mt-2 space-y-1">
+                <li>• <code className="bg-red-800 px-2 py-1 rounded">GET /kpis/calidad-dia</code></li>
+                <li>• <code className="bg-red-800 px-2 py-1 rounded">GET /kpis/calidad-semana</code></li>
+                <li>• <code className="bg-red-800 px-2 py-1 rounded">GET /kpis/tendencias</code></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {/* Tarjetas de Estadísticas Generales */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-6 mx-6">
         <StatCard title="Reportes" value={stats.reportes} icon={<FileText size={24} />} color="bg-blue-600" linkTo="/reportes" />
         <StatCard title="Usuarios" value={stats.usuarios} icon={<Users size={24} />} color="bg-emerald-600" linkTo="/usuarios" />
@@ -206,44 +376,141 @@ function Dashboard() {
       </div>
 
       {/* Sección principal con Gráficas y Reportes Recientes */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mx-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mx-6 mb-6">
         {/* Columna de Gráficas (ocupa 2/3 del espacio en pantallas grandes) */}
-        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          {/* Gráfico de Calidad Semanal */}
+          {calidadSemanaData ? (
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-                <h2 className="text-lg font-semibold text-emerald-400 mb-4">Usuarios Registrados por Mes</h2>
-                <div className="h-64">
-                    <Bar options={chartOptions} data={userChartData} />
-                </div>
+              <h2 className="text-lg font-semibold text-emerald-400 mb-4 flex items-center">
+                <TrendingUp className="h-5 w-5 mr-2" />
+                Evolución de Calidad - Última Semana
+              </h2>
+              <div className="h-80">
+                <Line 
+                  options={{
+                    ...lineChartOptions,
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: { color: '#9ca3af' },
+                        grid: { color: '#374151' }
+                      },
+                      y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        beginAtZero: true,
+                        ticks: { color: '#9ca3af' },
+                        grid: { drawOnChartArea: false }
+                      },
+                      x: {
+                        ticks: { color: '#9ca3af' },
+                        grid: { color: '#374151' }
+                      }
+                    }
+                  }} 
+                  data={calidadSemanaData} 
+                />
+              </div>
             </div>
+          ) : (
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-                <h2 className="text-lg font-semibold text-emerald-400 mb-4">Carrocerías Creadas por Mes</h2>
-                <div className="h-64">
-                    <Bar options={chartOptions} data={carroceriaChartData} />
+              <div className="flex items-center justify-center h-80 text-gray-400">
+                <div className="text-center">
+                  <BarChart3 className="h-16 w-16 mx-auto mb-4 text-gray-600" />
+                  <p className="text-lg">No hay datos de calidad semanal</p>
+                  <p className="text-sm">Los KPIs se cargarán cuando el backend esté disponible</p>
                 </div>
+              </div>
             </div>
+          )}
+
+          {/* Gráfico de Tendencias */}
+          {tendenciasData ? (
+            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+              <h2 className="text-lg font-semibold text-emerald-400 mb-4 flex items-center">
+                <BarChart3 className="h-5 w-5 mr-2" />
+                Tendencias de Volumen - Últimos 15 Días
+              </h2>
+              <div className="h-80">
+                <Bar options={chartOptions} data={tendenciasData} />
+              </div>
+            </div>
+          ) : (
+            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+              <div className="flex items-center justify-center h-80 text-gray-400">
+                <div className="text-center">
+                  <TrendingUp className="h-16 w-16 mx-auto mb-4 text-gray-600" />
+                  <p className="text-lg">No hay datos de tendencias</p>
+                  <p className="text-sm">Los KPIs se cargarán cuando el backend esté disponible</p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
         
-        {/* Columna de Reportes Recientes (ocupa 1/3 del espacio) */}
-        <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-          <h2 className="text-lg font-semibold text-emerald-400 mb-4">Reportes Recientes</h2>
-          <div className="space-y-4">
-            {recentReportes.length > 0 ? (
-              recentReportes.map((reporte) => (
-                <Link key={reporte.id} to={`/reportes/${reporte.id}`} className="block hover:bg-gray-700 p-3 rounded-lg transition-colors duration-200">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="font-semibold text-white">Reporte #{reporte.id}</p>
-                      <p className="text-sm text-gray-400">VIN: {reporte.vin}</p>
+        {/* Columna de Reportes Recientes y Gráfico Doughnut (ocupa 1/3 del espacio) */}
+        <div className="space-y-6">
+          {/* Gráfico Doughnut de Calidad del Día */}
+          {calidadDoughnutData ? (
+            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+              <h2 className="text-lg font-semibold text-emerald-400 mb-4 flex items-center">
+                <Target className="h-5 w-5 mr-2" />
+                Distribución de Calidad
+              </h2>
+              <div className="h-64">
+                <Doughnut 
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: { 
+                        display: true,
+                        position: 'bottom',
+                        labels: { color: '#9ca3af' }
+                      }
+                    }
+                  }} 
+                  data={calidadDoughnutData} 
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+              <div className="flex items-center justify-center h-64 text-gray-400">
+                <div className="text-center">
+                  <Target className="h-16 w-16 mx-auto mb-4 text-gray-600" />
+                  <p className="text-lg">No hay datos de calidad</p>
+                  <p className="text-sm">Los KPIs se cargarán cuando el backend esté disponible</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Reportes Recientes */}
+          <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h2 className="text-lg font-semibold text-emerald-400 mb-4">Reportes Recientes</h2>
+            <div className="space-y-4">
+              {recentReportes.length > 0 ? (
+                recentReportes.map((reporte) => (
+                  <Link key={reporte.id} to={`/reportes/${reporte.id}`} className="block hover:bg-gray-700 p-3 rounded-lg transition-colors duration-200">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="font-semibold text-white">Reporte #{reporte.id}</p>
+                        <p className="text-sm text-gray-400">VIN: {reporte.vin}</p>
+                      </div>
+                      <span className="text-xs text-gray-500">
+                        {format(new Date(reporte.createdAt), 'dd MMM yyyy', { locale: es })}
+                      </span>
                     </div>
-                    <span className="text-xs text-gray-500">
-                      {format(new Date(reporte.createdAt), 'dd MMM yyyy', { locale: es })}
-                    </span>
-                  </div>
-                </Link>
-              ))
-            ) : (
-              <p className="text-gray-400 text-center py-8">No hay reportes recientes.</p>
-            )}
+                  </Link>
+                ))
+              ) : (
+                <p className="text-gray-400 text-center py-8">No hay reportes recientes.</p>
+              )}
+            </div>
           </div>
         </div>
       </div>
