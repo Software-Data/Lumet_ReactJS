@@ -20,7 +20,8 @@ import {
   MessageCircle,
   Shield,
   Key,
-  UserCheck
+  UserCheck,
+  Bot
 } from 'lucide-react';
 
 // Componente reutilizable para los items del menú
@@ -176,6 +177,13 @@ export function Sidebar() {
         ))}
       </div>
       <div>
+        {/* Chatbot - Accesible para todos los usuarios autenticados */}
+        <NavItem 
+          label="Asistente IA" 
+          to="/chatbot" 
+          icon={<Bot className="h-5 w-5" />}
+        />
+        
         <NavItem 
           label="Feedback" 
           to="/feedbacks" 
