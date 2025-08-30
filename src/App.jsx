@@ -36,6 +36,7 @@ import RegistroPage from './Pages/RegitroPage';
 import TermsOfService from './Pages/TerminosPage';
 import RolesPermisosPage from './Pages/RolesPermisosPage';
 import VerificacionPage from './Pages/VerificacionPage';
+import ChatbotPage from './Pages/ChatbotPage';
 
 function App() {
   return (     
@@ -89,6 +90,9 @@ function App() {
               
               {/* Nuevas rutas de permisos */}
               <Route path="/roles-permisos" element={<RolesPermisosPage />} />
+              
+              {/* Ruta del Chatbot */}
+              <Route path="/chatbot" element={<ChatbotPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

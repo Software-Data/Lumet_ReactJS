@@ -276,29 +276,6 @@ function Dashboard() {
       {/* Encabezado con título y selector de fechas */}
       <div className="flex flex-col md:flex-row justify-between items-center border-b-2 border-b-emerald-800 h-20 px-6 bg-gray-800 mb-6 gap-4">
         <h1 className="text-3xl font-bold text-white">Dashboard de Calidad</h1>
-        <div className="flex items-center gap-4 bg-gray-800 p-2 rounded-lg">
-           <CalendarIcon className="h-5 w-5 text-emerald-400"/>
-           <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              selectsStart
-              startDate={startDate}
-              endDate={endDate}
-              className="bg-gray-700 text-white p-2 rounded w-32 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              dateFormat="dd/MM/yyyy"
-            />
-            <span className="text-gray-400">-</span>
-            <DatePicker
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
-              selectsEnd
-              startDate={startDate}
-              endDate={endDate}
-              minDate={startDate}
-              className="bg-gray-700 text-white p-2 rounded w-32 focus:outline-none focus:ring-emerald-500"
-              dateFormat="dd/MM/yyyy"
-            />
-        </div>
       </div>
 
       {/* KPIs de Calidad del Día */}
@@ -376,144 +353,173 @@ function Dashboard() {
       </div>
 
       {/* Sección principal con Gráficas y Reportes Recientes */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mx-6 mb-6">
-        {/* Columna de Gráficas (ocupa 2/3 del espacio en pantallas grandes) */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Gráfico de Calidad Semanal */}
-          {calidadSemanaData ? (
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-              <h2 className="text-lg font-semibold text-emerald-400 mb-4 flex items-center">
-                <TrendingUp className="h-5 w-5 mr-2" />
-                Evolución de Calidad - Última Semana
-              </h2>
-              <div className="h-80">
-                <Line 
-                  options={{
-                    ...lineChartOptions,
-                    scales: {
-                      y: {
-                        beginAtZero: true,
-                        max: 100,
-                        ticks: { color: '#9ca3af' },
-                        grid: { color: '#374151' }
-                      },
-                      y1: {
-                        type: 'linear',
-                        display: true,
-                        position: 'right',
-                        beginAtZero: true,
-                        ticks: { color: '#9ca3af' },
-                        grid: { drawOnChartArea: false }
-                      },
-                      x: {
-                        ticks: { color: '#9ca3af' },
-                        grid: { color: '#374151' }
-                      }
-                    }
-                  }} 
-                  data={calidadSemanaData} 
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-              <div className="flex items-center justify-center h-80 text-gray-400">
-                <div className="text-center">
-                  <BarChart3 className="h-16 w-16 mx-auto mb-4 text-gray-600" />
-                  <p className="text-lg">No hay datos de calidad semanal</p>
-                  <p className="text-sm">Los KPIs se cargarán cuando el backend esté disponible</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Gráfico de Tendencias */}
-          {tendenciasData ? (
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-              <h2 className="text-lg font-semibold text-emerald-400 mb-4 flex items-center">
-                <BarChart3 className="h-5 w-5 mr-2" />
-                Tendencias de Volumen - Últimos 15 Días
-              </h2>
-              <div className="h-80">
-                <Bar options={chartOptions} data={tendenciasData} />
-              </div>
-            </div>
-          ) : (
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-              <div className="flex items-center justify-center h-80 text-gray-400">
-                <div className="text-center">
-                  <TrendingUp className="h-16 w-16 mx-auto mb-4 text-gray-600" />
-                  <p className="text-lg">No hay datos de tendencias</p>
-                  <p className="text-sm">Los KPIs se cargarán cuando el backend esté disponible</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-        
-        {/* Columna de Reportes Recientes y Gráfico Doughnut (ocupa 1/3 del espacio) */}
-        <div className="space-y-6">
-          {/* Gráfico Doughnut de Calidad del Día */}
-          {calidadDoughnutData ? (
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-              <h2 className="text-lg font-semibold text-emerald-400 mb-4 flex items-center">
-                <Target className="h-5 w-5 mr-2" />
-                Distribución de Calidad
-              </h2>
-              <div className="h-64">
-                <Doughnut 
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: { 
-                        display: true,
-                        position: 'bottom',
-                        labels: { color: '#9ca3af' }
-                      }
-                    }
-                  }} 
-                  data={calidadDoughnutData} 
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-              <div className="flex items-center justify-center h-64 text-gray-400">
-                <div className="text-center">
-                  <Target className="h-16 w-16 mx-auto mb-4 text-gray-600" />
-                  <p className="text-lg">No hay datos de calidad</p>
-                  <p className="text-sm">Los KPIs se cargarán cuando el backend esté disponible</p>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {/* Reportes Recientes */}
-          <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-            <h2 className="text-lg font-semibold text-emerald-400 mb-4">Reportes Recientes</h2>
-            <div className="space-y-4">
-              {recentReportes.length > 0 ? (
-                recentReportes.map((reporte) => (
-                  <Link key={reporte.id} to={`/reportes/${reporte.id}`} className="block hover:bg-gray-700 p-3 rounded-lg transition-colors duration-200">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className="font-semibold text-white">Reporte #{reporte.id}</p>
-                        <p className="text-sm text-gray-400">VIN: {reporte.vin}</p>
-                      </div>
-                      <span className="text-xs text-gray-500">
-                        {format(new Date(reporte.createdAt), 'dd MMM yyyy', { locale: es })}
-                      </span>
-                    </div>
-                  </Link>
-                ))
-              ) : (
-                <p className="text-gray-400 text-center py-8">No hay reportes recientes.</p>
-              )}
-            </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 md:px-6 mb-6">
+  {/* Columna de Gráficas (ocupa 2/3 en pantallas grandes) */}
+  <div className="md:col-span-2 space-y-6">
+    {/* Gráfico de Calidad Semanal */}
+    <div className="bg-gray-900/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg hover:shadow-xl transition-transform duration-300 hover:scale-[1.02]">
+      <h2 className="text-lg md:text-xl font-bold text-emerald-400 mb-4 flex items-center">
+        <TrendingUp className="h-5 w-5 mr-2" />
+        Evolución de Calidad - Última Semana
+      </h2>
+      <div className="h-72 md:h-80">
+        {calidadSemanaData ? (
+          <Line
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              animation: { duration: 800, easing: "easeOutQuart" },
+              interaction: { mode: "index", intersect: false },
+              plugins: {
+                tooltip: {
+                  backgroundColor: "#1f2937",
+                  titleColor: "#fff",
+                  bodyColor: "#d1d5db",
+                  borderColor: "#10b981",
+                  borderWidth: 1,
+                  padding: 12,
+                },
+                legend: { labels: { color: "#9ca3af" } },
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  max: 100,
+                  ticks: { color: "#9ca3af" },
+                  grid: { color: "#374151" },
+                },
+                x: {
+                  ticks: { color: "#9ca3af" },
+                  grid: { color: "#374151" },
+                },
+              },
+            }}
+            data={{
+              ...calidadSemanaData,
+              datasets: calidadSemanaData.datasets.map((ds) => ({
+                ...ds,
+                tension: 0.4,
+                borderWidth: 3,
+                pointRadius: 4,
+                pointHoverRadius: 7,
+                pointBackgroundColor: "#10b981",
+              })),
+            }}
+          />
+        ) : (
+          <div className="flex items-center justify-center h-full text-gray-400">
+            <BarChart3 className="h-16 w-16 text-gray-600" />
+            <p className="ml-4 text-center">No hay datos disponibles</p>
           </div>
-        </div>
+        )}
       </div>
+    </div>
+
+    {/* Gráfico de Tendencias */}
+    <div className="bg-gray-900/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg hover:shadow-xl transition-transform duration-300 hover:scale-[1.02]">
+      <h2 className="text-lg md:text-xl font-bold text-emerald-400 mb-4 flex items-center">
+        <BarChart3 className="h-5 w-5 mr-2" />
+        Tendencias de Volumen - Últimos 15 Días
+      </h2>
+      <div className="h-72 md:h-80">
+        {tendenciasData ? (
+          <Bar
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              animation: { duration: 1000, easing: "easeOutBounce" },
+              plugins: {
+                legend: { display: false },
+                tooltip: { backgroundColor: "#1f2937", bodyColor: "#d1d5db" },
+              },
+              scales: {
+                y: { ticks: { color: "#9ca3af" }, grid: { color: "#374151" } },
+                x: { ticks: { color: "#9ca3af" }, grid: { display: false } },
+              },
+            }}
+            data={{
+              ...tendenciasData,
+              datasets: tendenciasData.datasets.map((ds) => ({
+                ...ds,
+                borderRadius: 6,
+                hoverBackgroundColor: "#10b981",
+              })),
+            }}
+          />
+        ) : (
+          <div className="flex items-center justify-center h-full text-gray-400">
+            <TrendingUp className="h-16 w-16 text-gray-600" />
+            <p className="ml-4">No hay datos de tendencias</p>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+
+  {/* Columna de Reportes Recientes y Gráfico Doughnut */}
+  <div className="space-y-6">
+    {/* Doughnut */}
+    <div className="bg-gray-900/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg hover:shadow-xl transition-transform duration-300 hover:scale-[1.02]">
+      <h2 className="text-lg md:text-xl font-bold text-emerald-400 mb-4 flex items-center">
+        <Target className="h-5 w-5 mr-2" />
+        Distribución de Calidad
+      </h2>
+      <div className="h-56 md:h-64">
+        {calidadDoughnutData ? (
+          <Doughnut
+            options={{
+              responsive: true,
+              maintainAspectRatio: false,
+              cutout: "65%",
+              plugins: {
+                legend: {
+                  display: true,
+                  position: "bottom",
+                  labels: { color: "#9ca3af" },
+                },
+              },
+            }}
+            data={calidadDoughnutData}
+          />
+        ) : (
+          <div className="flex items-center justify-center h-full text-gray-400">
+            <Target className="h-16 w-16 text-gray-600" />
+            <p className="ml-4">No hay datos</p>
+          </div>
+        )}
+      </div>
+    </div>
+
+    {/* Reportes Recientes */}
+    <div className="bg-gray-900/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg">
+      <h2 className="text-lg md:text-xl font-bold text-emerald-400 mb-4">Reportes Recientes</h2>
+      <div className="space-y-4">
+        {recentReportes.length > 0 ? (
+          recentReportes.map((reporte) => (
+            <Link
+              key={reporte.id}
+              to={`/reportes/${reporte.id}`}
+              className="block hover:bg-gray-800 p-3 rounded-lg transition-colors duration-200"
+            >
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="font-semibold text-white">Reporte #{reporte.id}</p>
+                  <p className="text-sm text-gray-400">VIN: {reporte.vin}</p>
+                </div>
+                <span className="text-xs text-gray-500">
+                  {format(new Date(reporte.createdAt), "dd MMM yyyy", { locale: es })}
+                </span>
+              </div>
+            </Link>
+          ))
+        ) : (
+          <p className="text-gray-400 text-center py-8">No hay reportes recientes.</p>
+        )}
+      </div>
+    </div>
+  </div>
+</div>
+
     </Layout>
   );
 }
