@@ -228,7 +228,7 @@ function LandingPage() {
               className="w-100 h-100 mx-auto mb-4 drop-shadow-xl animate-pulse rounded-2xl"
             />
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 leading-tight">Bienvenido a</h1>
-            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold text-blue-500 italic mx-8 sm:mx-16 md:mx-24 lg:mx-36">Lumet Inspection</h1>
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold text-blue-500 italic mx-8 sm:mx-16 md:mx-24 lg:mx-36">Lumet Inspection - UTVT</h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed mt-8 sm:mt-12 md:mt-16">
               Revoluciona el control de calidad automotriz con
             </p>
