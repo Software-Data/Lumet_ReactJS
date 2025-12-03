@@ -256,37 +256,12 @@ function LandingPage() {
           transition={{ delay: 0.4 }}
           className="text-base sm:text-lg text-gray-300 max-w-2xl leading-relaxed px-4"
         >
-          Basado en tecnología YOLOv8 entrenada en GPUs RTX con datasets gestionados vía Roboflow, nuestra solución detecta defectos en pintura automotriz con precisión milimétrica y velocidad inigualable.
+          Basado en tecnología Detectron2 entrenada en GPUs RTX con datasets gestionados vía Roboflow, nuestra solución detecta defectos en pintura automotriz con precisión milimétrica y velocidad inigualable.
         </motion.p>
       </section>
 
       {/* Demo Section */}
-      <section id="demo" className="container mx-auto py-16 sm:py-20 px-4 sm:px-6">
-        <motion.h3
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={fadeInUp}
-          className="text-2xl sm:text-3xl font-semibold text-center mb-6 sm:mb-8"
-        >
-          Demo en Vivo
-        </motion.h3>
-        <div className="relative aspect-video w-full max-w-4xl mx-auto shadow-2xl rounded-xl overflow-hidden ring-2 ring-blue-600">
-          <ReactPlayer
-            url="https://www.youtube.com/watch?v=TuDemoVideoID"
-            controls
-            width="100%"
-            height="100%"
-            light={ia1}
-            playing={false}
-            playIcon={
-              <button className="bg-blue-600 hover:bg-blue-700 text-white p-3 sm:p-4 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                ▶
-              </button>
-            }
-          />
-        </div>
-      </section>
+
 
       {/* Problema planteado */}
       <section className="bg-gray-950 py-8 sm:py-12 px-4 sm:px-6">
@@ -321,7 +296,7 @@ function LandingPage() {
             {
               icon: <IconZap />,
               title: "IA Avanzada",
-              desc: "Modelos YOLOv8 entrenados en GPUs NVIDIA RTX para máxima precisión.",
+              desc: "Modelos Detectron2 entrenados en GPUs NVIDIA RTX para máxima precisión.",
             },
             {
               icon: <IconTarget />,
